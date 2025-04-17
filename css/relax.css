@@ -1,0 +1,785 @@
+/* 放松页面容器 */
+.relax-container {
+    width: 100%;
+    height: 100vh;
+    max-width: 480px;
+    margin: 0 auto;
+    background: var(--bg-gradient);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* 顶部导航 */
+.relax-header {
+    padding: calc(var(--spacing-unit) * 0.5);
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing-unit) * 0.5);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    color: var(--text-primary);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.back-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.relax-header h1 {
+    font-family: var(--font-subtitle);
+    font-size: var(--font-size-lg);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* 主要内容区 */
+.relax-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: calc(var(--spacing-unit) * 4) var(--spacing-unit) calc(var(--spacing-unit) * 6);
+    overflow-y: auto;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+}
+
+/* 呼吸引导动画 */
+.breathing-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 400px;
+    z-index: 10;
+}
+
+.breathing-circle {
+    min-width: 200px;
+    min-height: 200px;
+    border-radius: 50%;
+    background: #4CAF50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    width: auto;
+    height: auto;
+    transform: scale(1);
+    position: relative;
+    overflow: visible;
+    z-index: 12;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+}
+
+.breathing-circle::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    border-radius: 50%;
+    background: linear-gradient(
+        to right,
+        #FF9800,
+        #E91E63,
+        #FFC107,
+        #FF9800
+    );
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask: 
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: loading 4s linear infinite;
+    padding: 2px;
+}
+
+.breathing-circle::after {
+    background: linear-gradient(to right, #FF9800, #E91E63, #FFC107, #FF9800) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, 
+                 linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: loading 4s linear infinite reverse;
+    opacity: 0.5;
+}
+
+@keyframes loading {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.breathing-text {
+    color: rgba(255, 255, 255, 0.95);
+    font-family: var(--font-subtitle);
+    font-size: var(--font-size-xl);
+    z-index: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.breathing-text.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.breathing-instruction {
+    margin-top: var(--spacing-unit);
+    color: var(--text-secondary);
+    font-family: var(--font-text);
+    font-size: var(--font-size-base);
+    text-align: center;
+    position: relative;
+    z-index: 11;
+    transform: translateY(0);
+    opacity: 1;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.breathing-instruction.hidden {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+}
+
+.breathing-count {
+    margin-top: var(--spacing-unit);
+    text-align: center;
+    font-family: var(--font-text);
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    position: relative;
+    z-index: 11;
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
+}
+
+.breathing-count.hidden {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+}
+
+/* 放松选项卡片 */
+.relax-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-unit);
+}
+
+.option-card {
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-unit);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-unit);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--card-shadow);
+}
+
+.option-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow-hover);
+}
+
+.option-icon {
+    font-size: 2rem;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(76, 217, 100, 0.1);
+    border-radius: 12px;
+}
+
+.option-content {
+    flex: 1;
+}
+
+.option-content h3 {
+    font-family: var(--font-subtitle);
+    font-size: var(--font-size-lg);
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+}
+
+.option-content p {
+    font-family: var(--font-text);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* 音乐播放器 */
+.music-player {
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-unit);
+    box-shadow: var(--card-shadow);
+}
+
+.music-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-unit);
+}
+
+.music-title {
+    font-family: var(--font-subtitle);
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+}
+
+.music-time {
+    font-family: var(--font-text);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.music-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: calc(var(--spacing-unit) * 1.5);
+    margin-bottom: var(--spacing-unit);
+}
+
+.control-btn {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    color: var(--text-primary);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.control-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.play-btn {
+    width: 48px;
+    height: 48px;
+    background: var(--relax-color);
+    color: white;
+}
+
+.play-btn:hover {
+    background: #2ECC71;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress {
+    width: 30%;
+    height: 100%;
+    background: var(--relax-color);
+    border-radius: 2px;
+}
+
+/* 移动端适配 */
+@media (max-width: 480px) {
+    .breathing-circle {
+        min-width: 150px;
+        min-height: 150px;
+    }
+
+    .option-card {
+        padding: calc(var(--spacing-unit) * 0.8);
+    }
+
+    .option-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+    }
+
+    .music-controls {
+        gap: var(--spacing-unit);
+    }
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+    .option-card,
+    .music-player {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .option-icon {
+        background: rgba(76, 217, 100, 0.2);
+    }
+
+    .progress-bar {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* 步骤进度条 */
+.step-progress {
+    display: flex;
+    justify-content: center;
+    gap: calc(var(--spacing-unit) * 2);
+    padding: calc(var(--spacing-unit) * 1);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+    width: 60px;
+}
+
+.step-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    right: -50%;
+    width: calc(var(--spacing-unit) * 2);
+    height: 1px;
+    background: var(--text-secondary);
+    opacity: 0.3;
+}
+
+.step-number {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-subtitle);
+    font-size: var(--font-size-sm);
+    transition: all 0.3s ease;
+}
+
+.step-label {
+    font-family: var(--font-text);
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.step-item.active .step-number {
+    background: var(--relax-color);
+    transform: scale(1.1);
+}
+
+.step-item.active .step-label {
+    color: var(--text-primary);
+    font-weight: var(--font-weight-medium);
+}
+
+.step-item.completed .step-number {
+    background: var(--relax-color);
+    opacity: 0.8;
+}
+
+/* 步骤内容 */
+.step-content {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.step-content.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+#step1.active, #step2.active {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* 呼吸引导动画 */
+.breathing-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 400px;
+    z-index: 10;
+}
+
+/* 冥想容器样式复用呼吸容器的样式 */
+.meditation-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 400px;
+    z-index: 10;
+    padding: var(--spacing-unit);
+}
+
+/* 冥想内容样式改为卡片样式 */
+.meditation-content {
+    width: 100%;
+    max-width: 320px;
+    min-height: 200px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    z-index: 12;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    margin-bottom: var(--spacing-unit);
+    padding: var(--spacing-unit);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+/* 冥想倒计时样式优化 */
+.meditation-countdown {
+    font-family: var(--font-subtitle);
+    font-size: var(--font-size-md);
+    color: var(--text-primary);
+    text-align: center;
+    position: absolute;
+    top: calc(var(--spacing-unit) * 0.5);
+    right: calc(var(--spacing-unit) * 0.5);
+    background: rgba(0, 0, 0, 0.6);
+    color: rgba(255, 255, 255, 0.95);
+    padding: 4px 12px;
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 20;
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
+}
+
+/* 冥想文本样式优化 */
+.meditation-text {
+    color: var(--text-primary);
+    font-family: var(--font-text);
+    font-size: var(--font-size-lg);
+    line-height: 1.6;
+    text-align: center;
+    max-width: 100%;
+    word-break: break-word;
+    opacity: 0;
+    transition: all 0.3s ease;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 0.5);
+}
+
+.meditation-text.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 冥想指导文本样式优化 */
+.meditation-instruction {
+    margin-top: var(--spacing-unit);
+    color: var(--text-secondary);
+    font-family: var(--font-text);
+    font-size: var(--font-size-base);
+    text-align: center;
+    width: 100%;
+    opacity: 0.9;
+}
+
+/* 专注模式样式统一处理 */
+.focus-mode .breathing-instruction,
+.focus-mode .breathing-count,
+.focus-mode .meditation-instruction {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* 专注模式下倒计时的特殊样式 */
+.focus-mode .meditation-countdown {
+    background: rgba(0, 0, 0, 0.6);
+    color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 添加卡片进入动画 */
+#step2.active .meditation-container {
+    animation: cardEnter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes cardEnter {
+    from {
+        transform: translateY(40px) scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* 继续按钮 */
+.continue-btn {
+    position: fixed;
+    bottom: calc(var(--spacing-unit) * 6);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: calc(var(--spacing-unit) * 0.8) calc(var(--spacing-unit) * 1.5);
+    font-size: var(--font-size-base);
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing-unit) * 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 95;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.continue-btn:hover {
+    background: #45a049;
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.continue-btn svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+}
+
+.continue-btn:hover svg {
+    transform: translateX(4px);
+}
+
+/* 动画 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 专注模式相关样式 */
+.focus-mode .relax-header,
+.focus-mode .step-progress,
+.focus-mode .continue-btn,
+.focus-mode .breathing-instruction,
+.focus-mode .breathing-count {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.focus-mode .step-progress {
+    transform: translateY(100%);
+}
+
+.focus-mode .relax-main {
+    padding: var(--spacing-unit);
+}
+
+/* 添加过渡效果 */
+.relax-header,
+.step-progress,
+.continue-btn,
+.relax-main,
+.breathing-instruction,
+.breathing-count {
+    transition: all 0.3s ease;
+}
+
+/* 专注模式下按钮的显示 */
+.focus-mode .continue-btn {
+    opacity: 0;
+    transform: translateX(-50%) translateY(100%);
+    pointer-events: none;
+}
+
+.countdown-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-subtitle);
+    font-size: 120px;
+    color: white;
+    z-index: 10;
+    opacity: 0;
+    animation: countdownAnimation 1s ease-out;
+}
+
+@keyframes countdownAnimation {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+    80% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+}
+
+/* 继续按钮在步骤2中的位置调整 */
+#step2.active ~ .continue-btn {
+    position: fixed;
+    bottom: calc(var(--spacing-unit) * 6);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 95;
+}
+
+/* 专注模式相关样式 */
+.focus-mode .breathing-count {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes containerFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -45%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* 专注模式相关样式 */
+.focus-mode .meditation-guide {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* 确保卡片在专注模式下保持居中 */
+.focus-mode #step2.active {
+    justify-content: center;
+    align-items: center;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.focus-mode .meditation-container {
+    margin: 0 auto;
+    transform: translateY(0);
+}
+
+/* 添加CSS变量 */
+:root {
+    --header-height: 60px;
+    --progress-height: 40px;
+} 

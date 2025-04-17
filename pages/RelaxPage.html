@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>放松一下 - 疲劳恢复助手</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=ZCOOL+QingKe+HuangYou&family=ZCOOL+XiaoWei&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/relax.css">
+</head>
+<body>
+    <div class="relax-container">
+        <!-- 顶部导航 -->
+        <header class="relax-header">
+            <button class="back-btn" onclick="history.back()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <h1>放松一下</h1>
+        </header>
+
+        <!-- 步骤进度 -->
+        <div class="step-progress">
+            <div class="step-item active" data-step="1">
+                <div class="step-number">1</div>
+                <div class="step-label">呼吸练习</div>
+            </div>
+            <div class="step-item" data-step="2">
+                <div class="step-number">2</div>
+                <div class="step-label">正念冥想</div>
+            </div>
+        </div>
+
+        <!-- 主要内容区 -->
+        <main class="relax-main">
+            <!-- 步骤1：呼吸引导动画 -->
+            <div class="step-content active" id="step1">
+                <div class="breathing-container">
+                    <div class="breathing-circle">
+                        <div class="breathing-text"></div>
+                    </div>
+                    <div class="breathing-instruction">跟随动画节奏呼吸</div>
+                    <div class="breathing-count">第 <span id="cycleCount">1</span> 组</div>
+                </div>
+            </div>
+
+            <!-- 步骤2：正念冥想 -->
+            <div class="step-content" id="step2">
+                <div class="meditation-container">
+                    <div class="meditation-content">
+                        <div class="meditation-countdown">5:00</div>
+                        <div class="meditation-text" id="meditationText"></div>
+                    </div>
+                    <div class="meditation-instruction">跟随引导语冥想</div>
+                </div>
+            </div>
+
+            <!-- 继续按钮 -->
+            <button class="continue-btn" id="continueBtn">
+                下一步
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </main>
+    </div>
+
+    <script src="../js/relax.js"></script>
+</body>
+</html> 

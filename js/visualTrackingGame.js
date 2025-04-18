@@ -15,6 +15,10 @@ class VisualTrackingGame {
         this.startButton = document.getElementById('start-visual');
         this.continueButton = document.getElementById('continue-visual');
         
+        // 添加音效
+        this.clickSound = new Audio('../sounds/mixkit-modern-technology-select-3124.wav');
+        this.clickSound.volume = 0.3;
+        
         this.currentLevel = 1;
         this.gameTime = 30; // 30秒游戏时间
         this.countdownTimer = null;
@@ -118,19 +122,33 @@ class VisualTrackingGame {
         countdownElement.style.left = '10px';
         countdownElement.style.fontSize = '20px';
         countdownElement.style.color = '#FFFFFF';
+        countdownElement.style.display = 'flex';
+        countdownElement.style.alignItems = 'center';
+        countdownElement.style.gap = '10px';
+        
+        // 创建关卡显示元素
+        const levelElement = document.createElement('span');
+        levelElement.textContent = `第 ${this.currentLevel} 关`;
+        
+        // 创建时间显示元素
+        const timeElement = document.createElement('span');
+        timeElement.textContent = this.gameTime.toFixed(2);
+        
+        countdownElement.appendChild(levelElement);
+        countdownElement.appendChild(timeElement);
         this.gameContainer.appendChild(countdownElement);
 
         let timeLeft = this.gameTime;
-        countdownElement.textContent = timeLeft;
+        timeElement.textContent = timeLeft.toFixed(2);
 
         this.countdownTimer = setInterval(() => {
-            timeLeft--;
-            countdownElement.textContent = timeLeft;
+            timeLeft -= 0.01;
+            timeElement.textContent = timeLeft.toFixed(2);
             
             if (timeLeft <= 0) {
                 this.endGame();
             }
-        }, 1000);
+        }, 10); // 每10毫秒更新一次，实现更流畅的倒计时
     }
 
     enterFullscreen() {
@@ -180,7 +198,7 @@ class VisualTrackingGame {
         // 创建点击区域容器
         const clickArea = document.createElement('div');
         clickArea.style.position = 'absolute';
-        clickArea.style.width = `${this.targetSize * 2}px`; // 扩大点击区域
+        clickArea.style.width = `${this.targetSize * 2}px`;
         clickArea.style.height = `${this.targetSize * 2}px`;
         clickArea.style.cursor = 'pointer';
         clickArea.style.display = 'flex';
@@ -194,41 +212,23 @@ class VisualTrackingGame {
         this.visualTarget.style.backgroundColor = '#FFFFFF';
         this.visualTarget.style.borderRadius = '50%';
         this.visualTarget.style.opacity = '1';
-        this.visualTarget.style.transition = 'opacity 0.1s ease';
-        this.visualTarget.style.pointerEvents = 'none'; // 禁用目标点的点击事件
-        
-        // 创建点击效果元素
-        const clickEffect = document.createElement('div');
-        clickEffect.style.position = 'absolute';
-        clickEffect.style.width = `${this.targetSize * 1.5}px`;
-        clickEffect.style.height = `${this.targetSize * 1.5}px`;
-        clickEffect.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
-        clickEffect.style.borderRadius = '50%';
-        clickEffect.style.transition = 'all 0.3s ease';
-        clickEffect.style.transform = 'scale(0)';
-        clickEffect.style.pointerEvents = 'none';
+        this.visualTarget.style.pointerEvents = 'none';
         
         // 添加点击效果
         clickArea.addEventListener('click', (event) => {
-            // 重置点击效果
-            clickEffect.style.transform = 'scale(0)';
-            clickEffect.style.opacity = '1';
+            if (!this.isGameRunning) return;
             
-            // 触发点击效果动画
-            setTimeout(() => {
-                clickEffect.style.transform = 'scale(1)';
-                clickEffect.style.opacity = '0';
-            }, 10);
+            // 停止当前正在播放的音效
+            this.clickSound.pause();
+            this.clickSound.currentTime = 0;
             
-            // 目标点淡出
-            this.visualTarget.style.opacity = '0';
-            setTimeout(() => {
-                this.handleTargetClick();
-            }, 100);
+            // 播放新的音效
+            this.clickSound.play().catch(e => console.log('Audio play failed:', e));
+            
+            this.handleTargetClick();
         });
         
         clickArea.appendChild(this.visualTarget);
-        clickArea.appendChild(clickEffect);
         gameContent.appendChild(clickArea);
         this.startAutoMove();
     }
@@ -312,8 +312,8 @@ class VisualTrackingGame {
         clearInterval(this.countdownTimer);
         clearInterval(this.autoMoveTimer);
         
-        const timeLeft = parseInt(document.getElementById('countdown').textContent);
-        const timeUsed = this.gameTime - timeLeft;
+        // 计算实际使用时间
+        const timeUsed = (this.gameTime - parseFloat(document.getElementById('countdown').querySelector('span:last-child').textContent)).toFixed(2);
         
         if (this.visualScore >= this.maxClicks) {
             // 成功完成
@@ -334,9 +334,19 @@ class VisualTrackingGame {
     }
 
     nextLevel() {
+        // 检查本地存储中的最高关卡记录
+        const savedMaxLevel = localStorage.getItem('visualTrackingLevel');
+        const currentMaxLevel = savedMaxLevel ? parseInt(savedMaxLevel) : 0;
+        
+        // 进入下一关
         this.currentLevel++;
         this.updateGameSettings();
-        this.saveProgress(); // 保存新的关卡记录
+        
+        // 如果当前关卡超过本地记录，则更新
+        if (this.currentLevel > currentMaxLevel) {
+            this.saveProgress(); // 保存新的关卡记录
+        }
+        
         this.hideResultModal();
         this.startGame();
     }
@@ -384,7 +394,6 @@ class VisualTrackingGame {
     startNewGame() {
         this.currentLevel = 1;
         this.updateGameSettings();
-        this.saveProgress();
         this.startGame();
     }
 

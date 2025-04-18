@@ -322,13 +322,13 @@
 .focus-card-content h2 {
     font-family: var(--font-subtitle);
     font-size: var(--font-size-xl);
-    color: var(--text-primary);
+    color: #2C3E50;
     margin-bottom: calc(var(--spacing-unit) * 0.5);
 }
 
 .focus-card-content p {
     font-family: var(--font-text);
-    color: var(--text-secondary);
+    color: #5D7590;
     margin-bottom: var(--spacing-unit);
 }
 
@@ -341,7 +341,7 @@
 }
 
 .tip-box p {
-    color: var(--text-primary);
+    color: #2C3E50;
     font-size: var(--font-size-sm);
     margin: 0;
     line-height: 1.5;

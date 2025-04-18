@@ -190,7 +190,6 @@ class NumberSortGame {
             this.currentGridCols = 3;
             this.maxNumber = this.currentGridRows * this.currentGridCols;
             this.bestTimes = {};
-            this.saveGameState(); // 保存重置后的状态
         }
         
         this.currentNumber = 1;
@@ -200,19 +199,6 @@ class NumberSortGame {
         this.renderNumbers();
         this.startTime = Date.now();
         this.hideResultModal();
-    }
-
-    // 重置游戏
-    resetGame() {
-        this.currentLevel = 1;
-        this.currentGridRows = 3;
-        this.currentGridCols = 3;
-        this.maxNumber = this.currentGridRows * this.currentGridCols;
-        this.bestTimes = {};
-        this.numContainer.innerHTML = '';
-        this.hideResultModal();
-        this.updateGridLayout();
-        this.saveGameState(); // 保存重置后的状态
     }
 
     // 渲染数字

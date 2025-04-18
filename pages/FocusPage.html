@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>恢复专注力</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/focusPage.css">
+</head>
+<body>
+    <div class="focus-page-container">
+        <!-- 顶部导航 -->
+        <header class="focus-header">
+            <button class="back-btn" onclick="history.back()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <h1>恢复专注力</h1>
+        </header>
+        <div class="focus-scroll-container">
+            <div class="focus-content">
+                <div class="focus-card">
+                    <div class="focus-card-content">
+                        <h2>数字排序训练</h2>
+                        <p>按顺序点击数字，提升专注力和反应速度</p>
+                        <div class="tip-box">
+                            <p>💡 提示：这个训练可以帮助提升逻辑思维和反应能力</p>
+                        </div>
+                        <div class="button-group">
+                            <button class="start-button" id="start-focus">开始训练</button>
+                            <button class="continue-button" id="continue-focus">继续挑战</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="focus-card">
+                    <div class="focus-card-content">
+                        <h2>视觉追踪训练</h2>
+                        <p>通过视觉追踪练习，提升您的专注能力</p>
+                        <div class="tip-box">
+                            <p>💡 提示：这个训练可以增强视觉注意力和空间感知能力</p>
+                        </div>
+                        <div class="button-group">
+                            <button class="start-button" id="start-visual">开始训练</button>
+                            <button class="continue-button" id="continue-visual">继续挑战</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 数字排序游戏全屏容器 -->
+    <div class="game-container" id="number-game-container">
+        <button class="exit-fullscreen">×</button>
+        <button class="help-button" title="查看游戏规则">?</button>
+        <div class="game-content">
+            <div id="num-container" class="grid-3"></div>
+        </div>
+
+        <!-- 数字排序游戏帮助弹窗 -->
+        <div class="help-modal">
+            <button class="close-help">×</button>
+            <h3>游戏规则</h3>
+            <p>1. 游戏开始后，屏幕上会显示 1-9 的随机数字</p>
+            <p>2. 您需要按照从小到大的顺序点击这些数字</p>
+            <p>3. 每完成一关，数字数量会增加 3 个</p>
+            <p>4. 挑战自己，争取更快的完成时间！</p>
+        </div>
+
+        <!-- 数字排序游戏结果弹窗 -->
+        <div class="modal-overlay"></div>
+        <div class="result-modal">
+            <div class="result-time"></div>
+            <div class="result-comment"></div>
+            <div class="result-buttons">
+                <button class="retry-button" id="retry-focus">再试一次</button>
+                <button class="next-button" id="next-focus">下一关</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 视觉追踪游戏全屏容器 -->
+    <div class="game-container" id="visual-game-container">
+        <button class="exit-fullscreen">×</button>
+        <button class="help-button" title="查看游戏规则">?</button>
+        <div class="game-content">
+            <p id="visual-instruction">请追踪并点击移动的目标</p>
+        </div>
+
+        <!-- 视觉追踪游戏帮助弹窗 -->
+        <div class="help-modal">
+            <button class="close-help">×</button>
+            <h3>游戏规则</h3>
+            <p>1. 游戏开始后，屏幕上会出现一个移动的目标点</p>
+            <p>2. 您需要追踪并点击这个目标点</p>
+            <p>3. 每次点击后，目标会移动到新的位置</p>
+            <p>4. 完成 10 次点击后训练结束</p>
+            <p>5. 挑战自己，争取更快的反应速度！</p>
+        </div>
+
+        <!-- 视觉追踪游戏结果弹窗 -->
+        <div class="modal-overlay"></div>
+        <div class="result-modal">
+            <div class="result-time"></div>
+            <div class="result-comment"></div>
+            <div class="result-buttons">
+                <button class="retry-button" id="retry-visual">再试一次</button>
+                <button class="next-button" id="next-visual">下一关</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/numberSortGame.js"></script>
+    <script src="../js/visualTrackingGame.js"></script>
+    <script src="../js/focusPage.js"></script>
+</body>
+</html> 

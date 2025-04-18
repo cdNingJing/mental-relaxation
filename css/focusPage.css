@@ -1,0 +1,613 @@
+.focus-page-container {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: var(--spacing-unit);
+    background: linear-gradient(135deg, var(--focus-color), #3498DB);
+    box-shadow: var(--card-shadow);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-top: 60px;
+}
+
+/* 游戏全屏容器 */
+.game-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, var(--focus-color), #3498DB);
+    z-index: 1000;
+}
+
+.game-container.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 游戏内容区域 */
+.game-content {
+    width: 100%;
+    height: 100%;
+    max-width: min(90vw, 90vh);
+    max-height: min(90vh, 90vw);
+    padding: var(--spacing-unit);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-unit);
+    position: relative;
+}
+
+.game-info {
+    position: absolute;
+    right: var(--spacing-unit);
+    top: calc(var(--spacing-unit) * 3.5);
+    text-align: right;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: clamp(0.7rem, 1.8vmin, 0.9rem);
+    z-index: 1;
+}
+
+.game-info p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* 横屏模式 */
+@media (orientation: landscape) {
+    .game-content {
+        flex-direction: row;
+        gap: var(--spacing-unit);
+    }
+
+    #num-container {
+        max-height: 80vh;
+        width: auto;
+    }
+
+    .game-info {
+        width: 40%;
+        text-align: center;
+    }
+}
+
+/* 竖屏模式 */
+@media (orientation: portrait) {
+    .game-content {
+        flex-direction: column;
+        gap: var(--spacing-unit);
+    }
+
+    #num-container {
+        width: 100%;
+        height: 60vh;
+        margin: 0;
+    }
+
+    .game-info {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+#num-container {
+    width: 100%;
+    aspect-ratio: 1;
+    display: grid;
+    gap: clamp(4px, 1.5vmin, 12px);
+    margin: auto;
+    padding: var(--spacing-unit);
+}
+
+/* 基础按钮样式 */
+.num-btn {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.95);
+    color: var(--focus-color);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+}
+
+/* 不同网格大小的按钮样式 */
+.grid-small .num-btn {
+    font-size: clamp(1.2rem, 4vmin, 2rem);
+    border-radius: 12px;
+}
+
+.grid-medium .num-btn {
+    font-size: clamp(1rem, 3vmin, 1.6rem);
+    border-radius: 10px;
+}
+
+.grid-large .num-btn {
+    font-size: clamp(1rem, 3.29vmin, 1.71rem);
+    border-radius: 8px;
+}
+
+/* 3x3 网格布局 */
+#num-container.grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+/* 4x4 网格布局 */
+#num-container.grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+/* 适配不同大小的网格 */
+#num-container.grid-5 {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+}
+
+#num-container.grid-6 {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+}
+
+#num-container.grid-7 {
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+}
+
+#num-container.grid-8 {
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+}
+
+.num-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.num-btn:hover::after {
+    opacity: 1;
+}
+
+.num-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.num-btn.correct {
+    background-color: #4CAF50;
+    color: white;
+    transform: none;
+    box-shadow: none;
+    pointer-events: none;
+}
+
+.num-btn.wrong {
+    animation: shake 0.2s ease-in-out;
+    background-color: #f44336;
+    color: white;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+}
+
+.game-controls {
+    position: absolute;
+    bottom: var(--spacing-unit);
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-unit);
+    padding: 0 var(--spacing-unit);
+}
+
+.start-button, .retry-button, .next-button {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--focus-color);
+    border: none;
+    padding: 0.8em 1.6em;
+    border-radius: 2em;
+    font-family: var(--font-button);
+    font-size: clamp(0.9rem, 2.5vmin, 1.2rem);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.start-button:hover, .retry-button:hover, .next-button:hover {
+    background: white;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.exit-fullscreen {
+    position: absolute;
+    top: var(--spacing-unit);
+    right: var(--spacing-unit);
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: min(32px, 6vmin);
+    height: min(32px, 6vmin);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: min(20px, 4vmin);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.exit-fullscreen:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.focus-scroll-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-unit);
+    margin: 0 calc(var(--spacing-unit) * -1);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.focus-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.focus-scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.focus-scroll-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.focus-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-unit);
+    padding-bottom: calc(var(--spacing-unit) * 2);
+}
+
+.focus-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-unit);
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.focus-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow-hover);
+}
+
+.focus-card-content {
+    text-align: center;
+}
+
+.focus-card-content h2 {
+    font-family: var(--font-subtitle);
+    font-size: var(--font-size-xl);
+    color: var(--text-primary);
+    margin-bottom: calc(var(--spacing-unit) * 0.5);
+}
+
+.focus-card-content p {
+    font-family: var(--font-text);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-unit);
+}
+
+.tip-box {
+    background: rgba(74, 144, 226, 0.1);
+    border-radius: var(--border-radius);
+    padding: calc(var(--spacing-unit) * 0.8);
+    margin: var(--spacing-unit) 0;
+    border-left: 4px solid var(--focus-color);
+}
+
+.tip-box p {
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    margin: 0;
+    line-height: 1.5;
+}
+
+#visual-container {
+    width: 100%;
+    height: 200px;
+    background: rgba(74, 144, 226, 0.1);
+    border-radius: var(--border-radius);
+    margin: calc(var(--spacing-unit) * 1.5) 0;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(74, 144, 226, 0.2);
+}
+
+.hidden {
+    display: none;
+}
+
+/* 结果弹窗 */
+.result-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: calc(var(--spacing-unit) * 1.5);
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    max-width: 90%;
+    width: min(360px, 90vw);
+    backdrop-filter: blur(10px);
+}
+
+.result-modal.active {
+    display: block;
+    animation: modalPop 0.3s ease-out;
+}
+
+.level-info {
+    font-size: clamp(1rem, 3vmin, 1.3rem);
+    color: var(--focus-color);
+    margin-bottom: var(--spacing-unit);
+    font-weight: bold;
+    padding: 8px 16px;
+    background: rgba(74, 144, 226, 0.1);
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.result-time {
+    font-size: clamp(1.2rem, 4vmin, 1.6rem);
+    color: var(--focus-color);
+    margin-bottom: calc(var(--spacing-unit) * 0.8);
+    font-weight: bold;
+    white-space: pre-line;
+    line-height: 1.4;
+}
+
+.result-comment {
+    font-size: clamp(1rem, 3vmin, 1.2rem);
+    color: var(--text-primary);
+    margin-bottom: calc(var(--spacing-unit) * 1.2);
+    line-height: 1.4;
+}
+
+.result-buttons {
+    display: flex;
+    gap: calc(var(--spacing-unit) * 0.8);
+    justify-content: center;
+}
+
+.retry-button, .next-button {
+    background: var(--focus-color);
+    color: white;
+    border: none;
+    padding: 0.6em 1.2em;
+    border-radius: 8px;
+    font-size: clamp(0.9rem, 2.5vmin, 1.1rem);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.retry-button:hover, .next-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.retry-button:active, .next-button:active {
+    transform: translateY(0);
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 99;
+}
+
+.modal-overlay.active {
+    display: block;
+}
+
+@keyframes modalPop {
+    0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+.help-button {
+    position: absolute;
+    top: var(--spacing-unit);
+    right: calc(var(--spacing-unit) * 3.5);
+    width: min(32px, 6vmin);
+    height: min(32px, 6vmin);
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: min(16px, 3vmin);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.help-button:hover {
+    border-color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.8);
+    transform: scale(1.1);
+}
+
+.help-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: calc(var(--spacing-unit) * 2);
+    border-radius: min(2vmin, 1rem);
+    text-align: left;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    max-width: 90%;
+    width: min(400px, 90vw);
+}
+
+.help-modal.active {
+    display: block;
+    animation: modalPop 0.3s ease-out;
+}
+
+.help-modal h3 {
+    color: var(--focus-color);
+    font-size: clamp(1.2rem, 3vmin, 1.5rem);
+    margin-bottom: var(--spacing-unit);
+}
+
+.help-modal p {
+    color: var(--text-primary);
+    font-size: clamp(0.9rem, 2.5vmin, 1.1rem);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-unit);
+}
+
+.help-modal .close-help {
+    position: absolute;
+    top: var(--spacing-unit);
+    right: var(--spacing-unit);
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.help-modal .close-help:hover {
+    color: var(--text-primary);
+    transform: scale(1.1);
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
+}
+
+.continue-button {
+    font-family: var(--font-button);
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 2em;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.continue-button:hover {
+    background-color: var(--primary-hover-color);
+}
+
+.focus-header {
+    padding: calc(var(--spacing-unit) * 0.5);
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing-unit) * 0.5);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    color: var(--text-primary);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.back-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.focus-header h1 {
+    font-family: var(--font-subtitle);
+    font-size: var(--font-size-lg);
+    color: var(--text-primary);
+    margin: 0;
+} 

@@ -1,4 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // 检查是否已经显示过入场动画
+    const hasShownSplash = localStorage.getItem('hasShownSplash');
+    
+    if (!hasShownSplash) {
+        // 首次进入，显示入场动画
+        const splashScreen = document.querySelector('.splash-screen');
+        splashScreen.style.display = 'flex';
+        
+        // 动画结束后保存状态
+        setTimeout(() => {
+            localStorage.setItem('hasShownSplash', 'true');
+        }, 3500); // 动画总时长 3.5 秒
+    } else {
+        // 已经显示过动画，直接隐藏启动页并显示卡片
+        const splashScreen = document.querySelector('.splash-screen');
+        splashScreen.style.display = 'none';
+        const appContainer = document.querySelector('.app-container');
+        appContainer.style.opacity = '1';
+        appContainer.style.transform = 'translateY(0)';
+        
+        // 立即显示所有卡片
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+            card.style.animation = 'none';
+        });
+    }
+
     // 获取所有卡片元素
     const cards = document.querySelectorAll('.card');
     

@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.href = 'pages/FocusPage.html';
                     break;
                 case 'moodCard':
-                    window.location.href = 'pages/MoodPage.html';
+                    window.location.href = 'pages/moodReliefPage.html';
                     break;
             }
         }, 150);

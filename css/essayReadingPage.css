@@ -1,0 +1,209 @@
+.essay-reading-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    color: #333;
+    transition: transform 0.3s ease;
+}
+
+.close-button:hover {
+    transform: scale(1.1);
+}
+
+.hint-icon {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.hint-icon svg {
+    color: #666;
+    transition: color 0.3s;
+}
+
+.hint-icon:hover svg {
+    color: #333;
+}
+
+.essay-content {
+    width: 100%;
+    max-width: 700px;
+    margin-top: 60px;
+    padding: 20px;
+    overflow-y: auto;
+    height: calc(100vh - 120px);
+    line-height: 1.8;
+    color: #333;
+    font-family: "SimSun", "宋体", serif;
+}
+
+.essay-article {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.essay-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.essay-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #2c3e50;
+}
+
+.essay-info {
+    font-size: 14px;
+    color: #666;
+}
+
+.essay-info span {
+    margin: 0 6px;
+}
+
+.essay-body {
+    font-size: 16px;
+    line-height: 2;
+    text-align: justify;
+    text-indent: 2em;
+}
+
+.essay-body p {
+    margin-bottom: 20px;
+}
+
+.input-word {
+    display: inline-block;
+    position: relative;
+    margin: 0 2px;
+    width: 80px;
+}
+
+.input-word input {
+    width: 100%;
+    height: 24px;
+    border: none;
+    border-bottom: 1px solid;
+    padding: 0;
+    font-size: 16px;
+    text-align: center;
+    background: transparent;
+    transition: all 0.3s ease;
+    position: absolute;
+    left: 0;
+    top: -20px;
+    color: inherit;
+    font-family: inherit;
+}
+
+.input-word input:focus {
+    outline: none;
+    border-bottom-color: #4a90e2;
+}
+
+/* 自定义滚动条样式 */
+.essay-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.essay-content::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+}
+
+.essay-content::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+/* 弹出框样式 */
+.hint-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+}
+
+.hint-modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hint-modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+.hint-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.hint-modal-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    line-height: 1;
+}
+
+.hint-modal-body {
+    line-height: 1.6;
+    color: #333;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+} 

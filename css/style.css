@@ -76,9 +76,6 @@ body {
     line-height: 1.6;
     background: var(--bg-gradient);
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

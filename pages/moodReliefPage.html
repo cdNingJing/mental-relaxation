@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>情绪缓解 - 疲劳恢复助手</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/moodReliefPage.css">
+</head>
+<body>
+    <div class="mood-relief-container">
+        <!-- 顶部导航栏 -->
+        <header class="mood-header">
+            <button class="back-button" onclick="window.history.back()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <h1>情绪缓解</h1>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="mood-content">
+            <div class="mood-options-scroll">
+                <div class="mood-options">
+                    <div class="mood-option-card" onclick="window.location.href='essayReadingPage.html'">
+                        <h3>散文阅读</h3>
+                        <p>阅读优美散文，放松心情</p>
+                    </div>
+
+                    <div class="mood-option-card">
+                        <h3>诗词欣赏</h3>
+                        <p>品味经典诗词，陶冶情操</p>
+                    </div>
+
+                    <div class="mood-option-card">
+                        <h3>冥想引导</h3>
+                        <p>跟随引导进行冥想</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../js/moodReliefPage.js"></script>
+</body>
+</html> 

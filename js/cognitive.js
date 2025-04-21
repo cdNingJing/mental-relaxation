@@ -23,6 +23,8 @@ class CognitiveTrainer {
         this.stimulus = document.getElementById('stimulus');
         this.timerProgress = document.getElementById('timerProgress');
         this.startButton = document.getElementById('startButton');
+        this.gameArea = document.querySelector('.game-area');
+        this.exitFullscreenButton = document.getElementById('exitFullscreenButton');
         
         this.initEventListeners();
         this.initAudio();
@@ -38,6 +40,11 @@ class CognitiveTrainer {
         
         document.getElementById('backButton').addEventListener('click', () => {
             window.history.back();
+        });
+
+        // 添加全屏关闭按钮事件监听
+        this.exitFullscreenButton.addEventListener('click', () => {
+            this.toggleFullscreen();
         });
     }
 
@@ -62,11 +69,24 @@ class CognitiveTrainer {
         };
     }
 
+    async toggleFullscreen() {
+        try {
+            if (!document.fullscreenElement) {
+                await this.gameArea.requestFullscreen();
+            } else {
+                await document.exitFullscreen();
+            }
+        } catch (err) {
+            console.error(`全屏切换错误: ${err.message}`);
+        }
+    }
+
     startGame() {
         this.isPlaying = true;
         this.isLevelingUp = false;
         this.startButton.style.display = 'none';
         this.stimulus.classList.add('active');
+        this.toggleFullscreen(); // 进入全屏模式
         this.newRound();
     }
 

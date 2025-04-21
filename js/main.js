@@ -69,49 +69,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const card = e.currentTarget;
         const cardId = card.id;
         
-        // 添加点击动画
-        card.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            card.style.transform = '';
-            
-            // 根据卡片ID跳转到对应页面
-            switch(cardId) {
-                case 'relaxCard':
-                    window.location.href = 'pages/RelaxPage.html';
-                    break;
-                case 'focusCard':
-                    window.location.href = 'pages/FocusPage.html';
-                    break;
-                case 'moodCard':
-                    window.location.href = 'pages/moodReliefPage.html';
-                    break;
-            }
-        }, 150);
-    }
-
-    // 开始恢复功能
-    function startRecovery(type) {
-        const typeMap = {
-            'relax': {
-                name: '放松',
-                color: '#4CD964',
-                message: '开始放松练习，让身心回归平静...'
-            },
-            'focus': {
-                name: '专注力',
-                color: '#5B9EE2',
-                message: '开始专注力训练，提升注意力...'
-            },
-            'mood': {
-                name: '情绪',
-                color: '#FF9500',
-                message: '开始情绪调节，找回内心平静...'
-            }
-        };
-
-        const recovery = typeMap[type];
-        console.log(`开始${recovery.name}恢复模式`);
-        alert(recovery.message);
+        // 根据卡片ID跳转到对应页面
+        switch(cardId) {
+            case 'relaxCard':
+                window.location.href = 'pages/RelaxPage.html';
+                break;
+            case 'focusCard':
+                window.location.href = 'pages/FocusPage.html';
+                break;
+            case 'moodCard':
+                window.location.href = 'pages/moodReliefPage.html';
+                break;
+            case 'cognitiveCard':
+                window.location.href = 'pages/cognitivePage.html';
+                break;
+        }
     }
 
     // 添加波浪动画效果

@@ -1,0 +1,602 @@
+:root {
+    --primary-color: #4CAF50;
+    --error-color: #FF5252;
+    --bg-light: #f5f7fa;
+    --card-bg: #ffffff;
+    --text-dark: #2c3e50;
+    --text-secondary: #95a5a6;
+    --border-radius: 16px;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --gradient-primary: linear-gradient(135deg, #4CAF50, #2196F3);
+    --gradient-secondary: linear-gradient(135deg, #FF9800, #FF5722);
+    --gradient-combo: linear-gradient(45deg, #4CAF50, #2196F3, #9C27B0, #FF9800, #FF5252);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg-light);
+    color: var(--text-dark);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    line-height: 1.5;
+}
+
+.game-container {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    background: var(--card-bg);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* 顶部导航栏 */
+.game-header {
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card-bg);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    z-index: 10;
+}
+
+.back-button, .rules-button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: var(--bg-light);
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover, .rules-button:hover {
+    background: #edf2f7;
+    transform: translateY(-2px);
+}
+
+.back-button svg, .rules-button svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--text-dark);
+}
+
+/* 游戏状态区域 */
+.game-status {
+    padding: 15px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    background: var(--bg-light);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    margin-bottom: 20px;
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.status-card {
+    background: var(--card-bg);
+    padding: 10px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.3s ease;
+}
+
+.status-card:hover {
+    transform: translateY(-5px);
+}
+
+.level-card {
+    background: var(--gradient-primary);
+}
+
+.combo-card {
+    background: var(--card-bg);
+    position: relative;
+    overflow: hidden;
+}
+
+.combo-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-combo);
+    opacity: 0.1;
+    z-index: 0;
+}
+
+.score-card {
+    background: var(--gradient-secondary);
+}
+
+.status-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.level-card .status-label,
+.level-card .status-value,
+.score-card .status-label,
+.score-card .status-value {
+    color: white;
+}
+
+.status-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* 弹出效果样式 */
+.effects-container {
+    position: absolute;
+    top: 130px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.score-popup {
+    position: relative;
+    color: var(--primary-color);
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 20px;
+    animation: scorePopIn 0.5s ease-out forwards;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+    background: none;
+    box-shadow: none;
+}
+
+.combo-effect {
+    position: relative;
+    font-size: 24px;
+    font-weight: bold;
+    background: var(--gradient-combo);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: comboPopIn 0.5s ease-out forwards;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.level-up-effect {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.level-up-text {
+    font-size: 36px;
+    font-weight: bold;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin: 10px 0;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: levelUpTextAppear 0.5s ease-out forwards;
+}
+
+.level-up-text:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.achievement {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--card-bg);
+    padding: 12px 20px;
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideInRight 0.5s ease-out;
+    z-index: 1000;
+    max-width: 300px;
+}
+
+.achievement-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+}
+
+/* 动画关键帧 */
+@keyframes scorePopIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) translateY(20px);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2) translateY(-10px);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1) translateY(-20px);
+    }
+}
+
+@keyframes comboPopIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) translateY(20px);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2) translateY(-10px);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1) translateY(-20px);
+    }
+}
+
+@keyframes levelUpTextAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 游戏主区域 */
+.game-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    gap: 30px;
+    position: relative;
+    margin-top: 20px;
+}
+
+.start-button {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
+}
+
+.start-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+}
+
+.stimulus {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    position: relative;
+    transition: opacity 0.3s ease;
+}
+
+.stimulus.active {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+.stimulus-shape {
+    font-size: 150px;
+    line-height: 1;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    transition: transform 0.3s ease;
+}
+
+.stimulus-word {
+    font-size: 36px;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+}
+
+/* 添加悬停效果 */
+.stimulus.active .stimulus-shape {
+    animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* 计时器 */
+.timer-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.timer-progress {
+    height: 100%;
+    width: 100%;
+    background: var(--gradient-primary);
+    transform-origin: left;
+}
+
+@keyframes countdown {
+    from {
+        transform: scaleX(1);
+    }
+    to {
+        transform: scaleX(0);
+    }
+}
+
+.timer-progress.active {
+    animation: countdown 2s linear forwards;
+}
+
+/* 响应按钮 */
+.response-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    margin-top: auto;
+}
+
+.response-btn {
+    padding: 16px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+#wrongBtn {
+    background: var(--error-color);
+}
+
+#correctBtn {
+    background: var(--primary-color);
+}
+
+.response-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* 规则弹窗 */
+.game-rules {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 25px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: var(--shadow-lg);
+    display: none;
+    z-index: 1000;
+}
+
+.game-rules.active {
+    display: block;
+    animation: slideIn 0.3s ease;
+}
+
+.rules-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.rules-header h4 {
+    font-size: 1.5rem;
+    color: var(--text-dark);
+}
+
+.rules-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: var(--bg-light);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.rules-close:hover {
+    background: #edf2f7;
+}
+
+.rules-list {
+    list-style: none;
+}
+
+.rules-list li {
+    margin-bottom: 12px;
+    padding-left: 24px;
+    position: relative;
+    color: var(--text-secondary);
+}
+
+.rules-list li::before {
+    content: "•";
+    position: absolute;
+    left: 8px;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* 动画 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* 响应式适配 */
+@media (max-width: 480px) {
+    .game-container {
+        min-height: 100vh;
+    }
+
+    .game-status {
+        padding: 10px;
+        gap: 8px;
+        max-width: 300px;
+    }
+
+    .status-card {
+        padding: 8px;
+    }
+
+    .status-label {
+        font-size: 11px;
+    }
+
+    .status-value {
+        font-size: 18px;
+    }
+
+    .score-popup {
+        font-size: 20px;
+        padding: 12px 20px;
+    }
+
+    .combo-effect {
+        font-size: 30px;
+    }
+
+    .level-up-text {
+        font-size: 30px;
+    }
+
+    .achievement {
+        padding: 10px 15px;
+        max-width: 250px;
+    }
+
+    .achievement-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+
+    .start-button {
+        width: 150px;
+        height: 150px;
+        font-size: 1.2rem;
+    }
+
+    .stimulus-word {
+        font-size: 30px;
+        padding: 8px 16px;
+    }
+
+    .response-buttons {
+        gap: 15px;
+    }
+
+    .response-btn {
+        padding: 14px;
+        font-size: 1rem;
+    }
+} 

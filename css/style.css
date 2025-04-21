@@ -444,69 +444,57 @@ h1 {
     }
 }
 
-.function-cards {
+/* 滚动容器样式 */
+.scroll-container {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: calc(var(--spacing-unit) * 1.5);
-    padding: var(--spacing-unit);
+    height: calc(100vh - 40px);
+    overflow-y: auto;
+    padding-right: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
 }
 
+.scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 20px;
+}
+
+/* 修改卡片列表样式 */
+.function-cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-unit);
+    padding: var(--spacing-unit) 0;
+    min-height: 100%;
+}
+
+/* 修改卡片样式 */
 .card {
-    position: relative;
-    width: 100%;
-    min-height: 180px;
     background: var(--bg-white);
     border-radius: var(--border-radius);
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: var(--spacing-unit);
+    box-shadow: var(--card-shadow);
+    cursor: default;
+    width: 100%;
 }
 
 .card-content {
     position: relative;
-    z-index: 2;
-    padding: calc(var(--spacing-unit) * 1.5);
-    height: 100%;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     gap: calc(var(--spacing-unit) * 0.8);
 }
 
-.card-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
-    z-index: 1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.card:hover .card-overlay {
-    opacity: 1;
-}
-
-/* 卡片波浪动画 */
-.card-wave {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 40%;
-    background: linear-gradient(transparent, rgba(255, 255, 255, 0.1));
-    transform: translateY(100%);
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.card:hover .card-wave {
-    transform: translateY(0);
-    animation: waveAnimation 2s infinite linear;
-}
-
-/* 图标样式 */
+/* 图标包装器样式 */
 .icon-wrapper {
     width: 48px;
     height: 48px;
@@ -514,61 +502,33 @@ h1 {
     align-items: center;
     justify-content: center;
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
 }
 
 .icon {
     width: 28px;
     height: 28px;
-    transition: all 0.3s ease;
 }
 
-/* 卡片标题和描述 */
-.card-title {
-    font-family: var(--font-subtitle);
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-semibold);
-    color: var(--text-primary);
-    margin-bottom: calc(var(--spacing-unit) * 0.8);  /* 增加标题底部间距 */
-    letter-spacing: var(--letter-spacing-normal);
-    line-height: var(--line-height-normal);
-}
-
-.card-desc {
-    font-family: var(--font-text);
-    font-size: var(--font-size-base);
-    color: var(--text-secondary);
-    margin-bottom: var(--spacing-unit);
-    letter-spacing: var(--letter-spacing-normal);
-    line-height: var(--line-height-relaxed);
-}
-
-/* 为每个卡片设置不同的主题色 */
+/* 卡片主题色 */
 #relaxCard {
-    background: linear-gradient(135deg, var(--relax-color), #2ECC71);
+    background: linear-gradient(135deg, #4CD964, #2ECC71);
 }
 
 #focusCard {
-    background: linear-gradient(135deg, var(--focus-color), #3498DB);
+    background: linear-gradient(135deg, #5B9EE2, #3498DB);
 }
 
 #moodCard {
-    background: linear-gradient(135deg, var(--mood-color), #F1C40F);
+    background: linear-gradient(135deg, #FF9500, #F1C40F);
 }
 
-/* 卡片悬停效果 */
-.card:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+#cognitiveCard {
+    background: linear-gradient(135deg, #9B59B6, #8E44AD);
 }
 
-.card:hover .icon-wrapper {
-    transform: scale(1.1) rotate(5deg);
-    background: rgba(255, 255, 255, 0.2);
-}
-
-/* 文字颜色 */
+/* 卡片内容文字颜色 */
 .card .card-title,
 .card .card-desc {
     color: white;
@@ -576,20 +536,12 @@ h1 {
 
 /* 图标颜色 */
 .card .icon {
-    stroke: white;
+    filter: brightness(0) invert(1);
 }
 
-/* 动画关键帧 */
-@keyframes waveAnimation {
-    0% {
-        transform: translateY(0) translateX(0);
-    }
-    50% {
-        transform: translateY(0) translateX(-25%);
-    }
-    100% {
-        transform: translateY(0) translateX(0);
-    }
+/* 卡片阴影效果 */
+.card {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 /* 卡片出现动画 */

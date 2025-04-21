@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>认知训练</title>
+    <link rel="stylesheet" href="../css/cognitive.css">
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <button class="back-button" id="backButton">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"/>
+                </svg>
+            </button>
+            <button class="rules-button" id="rulesButton">
+                <svg viewBox="0 0 24 24">
+                    <path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"/>
+                </svg>
+            </button>
+        </header>
+
+        <div class="game-status">
+            <div class="status-card level-card">
+                <div class="status-label">等级</div>
+                <div class="status-value" id="currentLevel">1</div>
+            </div>
+            <div class="status-card combo-card" data-combo="0">
+                <div class="status-label">连击</div>
+                <div class="status-value" id="currentCombo">0</div>
+            </div>
+            <div class="status-card score-card">
+                <div class="status-label">分数</div>
+                <div class="status-value" id="currentScore">0</div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <button class="start-button" id="startButton">开始游戏</button>
+            
+            <div class="stimulus" id="stimulus">
+                <div class="stimulus-shape"></div>
+                <div class="stimulus-word"></div>
+                <div class="timer-bar">
+                    <div class="timer-progress" id="timerProgress"></div>
+                </div>
+            </div>
+
+            <div class="response-buttons">
+                <button class="response-btn" id="wrongBtn">错误</button>
+                <button class="response-btn" id="correctBtn">正确</button>
+            </div>
+
+            <!-- 将弹出效果容器移到游戏区域内部 -->
+            <div id="effectsContainer" class="effects-container"></div>
+        </div>
+
+        <div class="game-rules" id="gameRules">
+            <div class="rules-header">
+                <h4>游戏规则</h4>
+                <button class="rules-close" id="rulesClose">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+                    </svg>
+                </button>
+            </div>
+            <ul class="rules-list">
+                <li>观察中心显示的颜色、形状和文字</li>
+                <li>在2秒内判断是否存在矛盾</li>
+                <li>连续判断正确获得连击加成</li>
+                <li>每提升5次连击将提升难度等级</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="../js/cognitive.js"></script>
+</body>
+</html> 

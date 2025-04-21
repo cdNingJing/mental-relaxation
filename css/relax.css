@@ -1,774 +1,471 @@
-/* 放松页面容器 */
-.relax-container {
-    width: 100%;
-    height: 100vh;
-    max-width: 480px;
-    margin: 0 auto;
-    background: var(--bg-gradient);
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #FFFFFF;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    position: relative;
 }
 
-/* 顶部导航 */
-.relax-header {
-    padding: calc(var(--spacing-unit) * 0.5);
+/* 返回标签 */
+.back-link {
+    position: absolute;
+    top: 20px;
+    left: 20px;
     display: flex;
     align-items: center;
-    gap: calc(var(--spacing-unit) * 0.5);
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
 }
 
-.back-btn {
-    background: none;
-    border: none;
-    padding: 6px;
-    cursor: pointer;
-    color: var(--text-primary);
-    border-radius: 50%;
-    transition: all 0.3s ease;
-}
-
-.back-btn:hover {
-    background: rgba(0, 0, 0, 0.1);
-}
-
-.back-btn svg {
-    width: 20px;
-    height: 20px;
-}
-
-.relax-header h1 {
-    font-family: var(--font-subtitle);
-    font-size: var(--font-size-lg);
-    color: var(--text-primary);
-    margin: 0;
-}
-
-/* 主要内容区 */
-.relax-main {
+.container {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: calc(var(--spacing-unit) * 4) var(--spacing-unit) calc(var(--spacing-unit) * 6);
-    overflow-y: auto;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 400px;
+    padding: 60px 20px 20px;
     position: relative;
 }
 
-/* 呼吸引导动画 */
-.breathing-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    max-width: 400px;
-    z-index: 10;
+/* 时间显示 */
+.time {
+    font-size: 32px;
+    font-weight: 600;
+    color: #1D2129;
+    margin-bottom: 48px;
 }
 
-.breathing-circle {
+/* 呼吸圆圈 */
+.breath-circle {
+    width: 60vw;
+    height: 60vw;
     min-width: 200px;
     min-height: 200px;
     border-radius: 50%;
-    background: #4CAF50;
+    background: linear-gradient(180deg, #03A9F4 0%, #4E89E8 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    aspect-ratio: 1;
-    width: auto;
-    height: auto;
-    transform: scale(1);
+    margin-bottom: 48px;
+    box-shadow: 0 8px 40px rgba(78, 137, 232, 0.15);
     position: relative;
-    overflow: visible;
-    z-index: 12;
-    box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+    transform: scale(0.8);
 }
 
-.breathing-circle::before {
+.breath-inner-circle {
+    width: 90%;
+    height: 90%;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 3px solid #ffffff5e;
+}
+
+.breath-text {
+    color: #1D2129;
+    font-size: 17px;
+    font-weight: 400;
+}
+
+.breath-count {
+    color: #1D2129;
+    font-size: 36px;
+    font-weight: 500;
+}
+
+.breath-circle::after {
     content: '';
     position: absolute;
-    top: -1px;
-    left: -1px;
-    right: -1px;
-    bottom: -1px;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
     border-radius: 50%;
-    background: linear-gradient(
-        to right,
-        #FF9800,
-        #E91E63,
-        #FFC107,
-        #FF9800
-    );
-    -webkit-mask: 
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-    mask: 
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    animation: loading 4s linear infinite;
-    padding: 2px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
 }
 
-.breathing-circle::after {
-    background: linear-gradient(to right, #FF9800, #E91E63, #FFC107, #FF9800) border-box;
-    -webkit-mask: linear-gradient(#fff 0 0) padding-box, 
-                 linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    animation: loading 4s linear infinite reverse;
-    opacity: 0.5;
+.breath-circle.animate {
+    animation: breathe 4s ease-in-out infinite;
 }
 
-@keyframes loading {
+@keyframes breathe {
     0% {
-        transform: rotate(0deg);
+        transform: scale(0.8);
+    }
+    50% {
+        transform: scale(1);
     }
     100% {
-        transform: rotate(360deg);
+        transform: scale(0.8);
     }
 }
 
-.breathing-text {
-    color: rgba(255, 255, 255, 0.95);
-    font-family: var(--font-subtitle);
-    font-size: var(--font-size-xl);
-    z-index: 1;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0;
+.breath-circle.pause {
+    animation-play-state: paused;
 }
 
-.breathing-text.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.breathing-instruction {
-    margin-top: var(--spacing-unit);
-    color: var(--text-secondary);
-    font-family: var(--font-text);
-    font-size: var(--font-size-base);
-    text-align: center;
-    position: relative;
-    z-index: 11;
-    transform: translateY(0);
-    opacity: 1;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.breathing-instruction.hidden {
-    opacity: 0;
-    transform: translateY(10px);
-    pointer-events: none;
-}
-
-.breathing-count {
-    margin-top: var(--spacing-unit);
-    text-align: center;
-    font-family: var(--font-text);
-    font-size: var(--font-size-base);
-    color: var(--text-secondary);
-    position: relative;
-    z-index: 11;
-    opacity: 1;
-    transform: translateY(0);
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
-}
-
-.breathing-count.hidden {
-    opacity: 0;
-    transform: translateY(10px);
-    pointer-events: none;
-}
-
-/* 放松选项卡片 */
-.relax-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--spacing-unit);
-}
-
-.option-card {
-    background: var(--bg-white);
-    border-radius: var(--border-radius);
-    padding: var(--spacing-unit);
+/* 呼吸模式 */
+.breath-modes {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-unit);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: var(--card-shadow);
-}
-
-.option-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--card-shadow-hover);
-}
-
-.option-icon {
-    font-size: 2rem;
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(76, 217, 100, 0.1);
-    border-radius: 12px;
-}
-
-.option-content {
-    flex: 1;
-}
-
-.option-content h3 {
-    font-family: var(--font-subtitle);
-    font-size: var(--font-size-lg);
-    color: var(--text-primary);
-    margin: 0 0 4px 0;
-}
-
-.option-content p {
-    font-family: var(--font-text);
-    font-size: var(--font-size-sm);
-    color: var(--text-secondary);
-    margin: 0;
-}
-
-/* 音乐播放器 */
-.music-player {
-    background: var(--bg-white);
-    border-radius: var(--border-radius);
-    padding: var(--spacing-unit);
-    box-shadow: var(--card-shadow);
-}
-
-.music-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing-unit);
-}
-
-.music-title {
-    font-family: var(--font-subtitle);
-    font-size: var(--font-size-base);
-    color: var(--text-primary);
-}
-
-.music-time {
-    font-family: var(--font-text);
-    font-size: var(--font-size-sm);
-    color: var(--text-secondary);
-}
-
-.music-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: calc(var(--spacing-unit) * 1.5);
-    margin-bottom: var(--spacing-unit);
-}
-
-.control-btn {
-    background: none;
-    border: none;
-    padding: 8px;
-    cursor: pointer;
-    color: var(--text-primary);
-    border-radius: 50%;
-    transition: all 0.3s ease;
-}
-
-.control-btn:hover {
-    background: rgba(0, 0, 0, 0.1);
-}
-
-.play-btn {
-    width: 48px;
-    height: 48px;
-    background: var(--relax-color);
-    color: white;
-}
-
-.play-btn:hover {
-    background: #2ECC71;
-}
-
-.progress-bar {
+    gap: 12px;
+    margin-bottom: 80px;
+    padding: 0 20px;
     width: 100%;
-    height: 4px;
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 2px;
-    overflow: hidden;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
 }
 
-.progress {
-    width: 30%;
-    height: 100%;
-    background: var(--relax-color);
-    border-radius: 2px;
+.breath-modes::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
 }
 
-/* 移动端适配 */
-@media (max-width: 480px) {
-    .breathing-circle {
-        min-width: 150px;
-        min-height: 150px;
-    }
-
-    .option-card {
-        padding: calc(var(--spacing-unit) * 0.8);
-    }
-
-    .option-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 1.5rem;
-    }
-
-    .music-controls {
-        gap: var(--spacing-unit);
-    }
+.mode-item {
+    flex: 0 0 auto;
+    width: 120px;
+    background: #F5F5F5;
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
 }
 
-/* 深色模式适配 */
-@media (prefers-color-scheme: dark) {
-    .option-card,
-    .music-player {
-        background: rgba(255, 255, 255, 0.1);
-    }
-
-    .option-icon {
-        background: rgba(76, 217, 100, 0.2);
-    }
-
-    .progress-bar {
-        background: rgba(255, 255, 255, 0.1);
-    }
+.mode-item.active {
+    background: #4A90E2;
 }
 
-/* 步骤进度条 */
-.step-progress {
+.mode-name {
+    color: #86909C;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.mode-time {
+    color: #4E5969;
+    font-size: 13px;
+}
+
+.mode-item.active .mode-name,
+.mode-item.active .mode-time {
+    color: #FFFFFF;
+}
+
+/* 开始按钮区域 */
+.start-section {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.start-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #4A90E2;
+    border: none;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    gap: calc(var(--spacing-unit) * 2);
-    padding: calc(var(--spacing-unit) * 1);
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.start-btn:hover {
+    background: #357ABD;
+}
+
+.start-tip {
+    color: #86909C;
+    font-size: 13px;
+}
+
+/* 进度条 */
+.progress-bar {
     position: fixed;
     bottom: 0;
     left: 0;
-    right: 0;
-    z-index: 90;
+    width: 100%;
+    height: 4px;
+    background: #F2F3F5;
 }
 
-.step-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    position: relative;
-    width: 60px;
-}
-
-.step-item:not(:last-child)::after {
+.progress-bar::after {
     content: '';
     position: absolute;
-    top: 12px;
-    right: -50%;
-    width: calc(var(--spacing-unit) * 2);
-    height: 1px;
-    background: var(--text-secondary);
-    opacity: 0.3;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0;
+    background: #4A90E2;
+    transition: width 0.3s linear;
 }
 
-.step-number {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: var(--text-secondary);
-    color: white;
+/* 专注模式 */
+.focus-mode .time,
+.focus-mode .breath-modes,
+.focus-mode .start-section,
+.focus-mode .back-link,
+.focus-mode .info-btn,
+.focus-mode .control-section {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* 响应式适配 */
+@media (max-width: 375px) {
+
+    .time {
+        font-size: 28px;
+    }
+
+    .breath-modes {
+        padding: 0 12px;
+    }
+}
+
+/* 信息按钮 */
+.info-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--font-subtitle);
-    font-size: var(--font-size-sm);
-    transition: all 0.3s ease;
 }
 
-.step-label {
-    font-family: var(--font-text);
-    font-size: var(--font-size-xs);
-    color: var(--text-secondary);
-    transition: all 0.3s ease;
-    white-space: nowrap;
+/* 训练总结 */
+.summary-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
 }
 
-.step-item.active .step-number {
-    background: var(--relax-color);
-    transform: scale(1.1);
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #F5F8FF;
+    border-radius: 8px;
 }
 
-.step-item.active .step-label {
-    color: var(--text-primary);
-    font-weight: var(--font-weight-medium);
+.summary-label {
+    color: #1D2129;
+    font-size: 15px;
+    font-weight: 500;
 }
 
-.step-item.completed .step-number {
-    background: var(--relax-color);
-    opacity: 0.8;
+.summary-value {
+    color: #4E89E8;
+    font-size: 15px;
+    font-weight: 600;
 }
 
-/* 步骤内容 */
-.step-content {
+.summary-tip {
+    color: #86909C;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
+    margin-top: 16px;
+    padding: 12px;
+    background: #F5F8FF;
+    border-radius: 8px;
+}
+
+/* 弹出框 */
+.modal {
     display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    position: relative;
-    overflow: hidden;
-}
-
-.step-content.active {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
-
-#step1.active, #step2.active {
-    height: 100vh;
-    display: flex;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1000;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
 }
 
-/* 呼吸引导动画 */
-.breathing-container {
+.modal.show {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    max-width: 400px;
-    z-index: 10;
 }
 
-/* 冥想容器样式复用呼吸容器的样式 */
-.meditation-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-width: 400px;
-    z-index: 10;
-    padding: var(--spacing-unit);
-}
-
-/* 冥想内容样式改为卡片样式 */
-.meditation-content {
-    width: 100%;
-    max-width: 320px;
-    min-height: 200px;
-    background: rgba(255, 245, 235, 0.95);
+.modal-content {
+    background: #FFFFFF;
     border-radius: 16px;
+    padding: 24px;
+    width: 90%;
+    max-width: 320px;
+    max-height: 80vh;
+    position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-    z-index: 12;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    margin-bottom: var(--spacing-unit);
-    padding: var(--spacing-unit);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 235, 215, 0.2);
-    transition: all 0.3s ease;
 }
 
-/* 冥想倒计时样式优化 */
-.meditation-countdown {
-    font-family: var(--font-subtitle);
-    font-size: var(--font-size-md);
-    color: #FFFFFF;
+.modal-content h3 {
+    color: #1D2129;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
     text-align: center;
-    position: absolute;
-    top: calc(var(--spacing-unit) * 0.5);
-    right: calc(var(--spacing-unit) * 0.5);
-    background: rgba(121, 85, 72, 0.8);
-    padding: 4px 12px;
-    border-radius: 8px;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 20;
-    opacity: 1;
-    transform: translateY(0);
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
 }
 
-/* 冥想文本样式优化 */
-.meditation-text {
-    color: #5D4037;
-    font-family: var(--font-text);
-    font-size: var(--font-size-lg);
-    line-height: 1.6;
-    text-align: center;
-    max-width: 100%;
-    word-break: break-word;
-    opacity: 0;
-    transition: all 0.3s ease;
-    flex: 1;
+.mode-list {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 0.5);
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    padding-right: 12px;
+    margin-right: -12px;
+    -webkit-overflow-scrolling: touch;
 }
 
-.meditation-text.show {
-    opacity: 1;
-    transform: translateY(0);
+.mode-list::-webkit-scrollbar {
+    width: 4px;
 }
 
-/* 冥想指导文本样式优化 */
-.meditation-instruction {
-    margin-top: var(--spacing-unit);
-    color: #8D6E63;
-    font-family: var(--font-text);
-    font-size: var(--font-size-base);
-    text-align: center;
-    width: 100%;
-    opacity: 0.9;
+.mode-list::-webkit-scrollbar-track {
+    background: #F5F5F5;
+    border-radius: 2px;
 }
 
-/* 专注模式样式统一处理 */
-.focus-mode .breathing-instruction,
-.focus-mode .breathing-count,
-.focus-mode .meditation-instruction {
-    opacity: 0;
-    transform: translateY(-10px);
-    pointer-events: none;
-    transition: all 0.3s ease;
+.mode-list::-webkit-scrollbar-thumb {
+    background: #E5E6EB;
+    border-radius: 2px;
 }
 
-/* 添加卡片进入动画 */
-#step2.active .meditation-container {
-    animation: cardEnter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes cardEnter {
-    from {
-        transform: translateY(40px) scale(0.9);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-    }
-}
-
-/* 继续按钮 */
-.continue-btn {
-    position: fixed;
-    bottom: calc(var(--spacing-unit) * 6);
-    left: 50%;
-    transform: translateX(-50%);
-    padding: calc(var(--spacing-unit) * 0.8) calc(var(--spacing-unit) * 1.5);
-    font-size: var(--font-size-base);
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 24px;
-    display: flex;
-    align-items: center;
-    gap: calc(var(--spacing-unit) * 0.5);
+.mode-item-select {
+    background: #F5F8FF;
+    border-radius: 12px;
+    padding: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
-    z-index: 95;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.continue-btn:hover {
-    background: #45a049;
-    transform: translateX(-50%) translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+.mode-item-select:hover {
+    background: #EBF2FF;
 }
 
-.continue-btn svg {
-    width: 20px;
-    height: 20px;
-    transition: transform 0.3s ease;
+.mode-item-select.active {
+    background: #4E89E8;
 }
 
-.continue-btn:hover svg {
-    transform: translateX(4px);
+.mode-item-select.active .mode-name,
+.mode-item-select.active .mode-time,
+.mode-item-select.active .mode-desc {
+    color: #FFFFFF;
 }
 
-/* 动画 */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* 专注模式相关样式 */
-.focus-mode .relax-header,
-.focus-mode .step-progress,
-.focus-mode .continue-btn,
-.focus-mode .breathing-instruction,
-.focus-mode .breathing-count {
-    transform: translateY(-100%);
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.3s ease;
-}
-
-.focus-mode .step-progress {
-    transform: translateY(100%);
-}
-
-.focus-mode .relax-main {
-    padding: var(--spacing-unit);
-}
-
-/* 添加过渡效果 */
-.relax-header,
-.step-progress,
-.continue-btn,
-.relax-main,
-.breathing-instruction,
-.breathing-count {
-    transition: all 0.3s ease;
-}
-
-/* 专注模式下按钮的显示 */
-.focus-mode .continue-btn {
-    opacity: 0;
-    transform: translateX(-50%) translateY(100%);
-    pointer-events: none;
-}
-
-.countdown-text {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-family: var(--font-subtitle);
-    font-size: 120px;
-    color: white;
-    z-index: 10;
-    opacity: 0;
-    animation: countdownAnimation 1s ease-out;
-}
-
-@keyframes countdownAnimation {
-    0% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1.5);
-    }
-    80% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
-    100% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.8);
-    }
-}
-
-/* 继续按钮在步骤2中的位置调整 */
-#step2.active ~ .continue-btn {
-    position: fixed;
-    bottom: calc(var(--spacing-unit) * 6);
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 95;
-}
-
-/* 专注模式相关样式 */
-.focus-mode .breathing-count {
-    opacity: 0;
-    transform: translateY(10px);
-    pointer-events: none;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes containerFadeIn {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -45%);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
-}
-
-/* 专注模式相关样式 */
-.focus-mode .meditation-guide {
-    opacity: 0;
-    transform: translateY(-10px);
-    pointer-events: none;
-    transition: all 0.3s ease;
-}
-
-/* 确保卡片在专注模式下保持居中 */
-.focus-mode #step2.active {
-    justify-content: center;
+.mode-item-main {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    padding-top: 0;
-    padding-bottom: 0;
+    margin-bottom: 4px;
 }
 
-.focus-mode .meditation-container {
-    margin: 0 auto;
-    transform: translateY(0);
+.mode-name {
+    color: #1D2129;
+    font-size: 16px;
+    font-weight: 500;
 }
 
-/* 添加CSS变量 */
-:root {
-    --header-height: 60px;
-    --progress-height: 40px;
+.mode-time {
+    color: #4E89E8;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.mode-desc {
+    color: #86909C;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.modal-close:hover {
+    opacity: 1;
+}
+
+.breath-group {
+    color: #1D2129;
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 4px;
+}
+
+/* 控制按钮区域 */
+.control-section {
+    display: none;
+    gap: 24px;
+    margin-bottom: 48px;
+}
+
+.control-section.show {
+    display: flex;
+}
+
+.control-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #4A90E2;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.control-btn:hover {
+    background: #357ABD;
+}
+
+.control-btn img {
+    width: 24px;
+    height: 24px;
+}
+
+.stop-btn {
+    background: #FF4D4F;
+}
+
+.stop-btn:hover {
+    background: #FF7875;
 } 

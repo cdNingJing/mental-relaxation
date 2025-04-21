@@ -3,69 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>疲劳恢复助手</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=ZCOOL+QingKe+HuangYou&family=ZCOOL+XiaoWei&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+    <title>ThinkShift - 思维转换</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- 启动页 -->
-    <div class="splash-screen">
-        <div class="splash-content">
-            <h1>疲劳恢复助手</h1>
-            <p class="subtitle">选择最适合您的恢复方式</p>
-        </div>
-    </div>
-
-    <!-- 主应用界面 -->
     <div class="app-container">
-        <main class="app-main">
-            <div class="scroll-container">
-                <div class="function-cards">
-                    <div class="card" id="relaxCard">
-                        <div class="card-content">
-                            <div class="icon-wrapper">
-                                <img src="assets/icons/relax.svg" alt="放松" class="icon">
-                            </div>
-                            <h2 class="card-title">放松一下</h2>
-                            <p class="card-desc">缓解身心压力，让自己轻松一刻</p>
-                        </div>
-                    </div>
-
-                    <div class="card" id="focusCard">
-                        <div class="card-content">
-                            <div class="icon-wrapper">
-                                <img src="assets/icons/focus.svg" alt="专注" class="icon">
-                            </div>
-                            <h2 class="card-title">恢复专注力</h2>
-                            <p class="card-desc">提升注意力，重获清晰思维</p>
-                        </div>
-                    </div>
-
-                    <div class="card" id="moodCard">
-                        <div class="card-content">
-                            <div class="icon-wrapper">
-                                <img src="assets/icons/mood.svg" alt="情绪" class="icon">
-                            </div>
-                            <h2 class="card-title">情绪缓解</h2>
-                            <p class="card-desc">调节情绪状态，找回内心平静</p>
-                        </div>
-                    </div>
-
-                    <div class="card" id="cognitiveCard">
-                        <div class="card-content">
-                            <div class="icon-wrapper">
-                                <img src="assets/icons/brain.svg" alt="认知训练" class="icon">
-                            </div>
-                            <h2 class="card-title">直觉训练</h2>
-                            <p class="card-desc">提升多线程认知能力，增强决策速度</p>
-                        </div>
-                    </div>
+        <!-- 顶部导航栏 -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo-title">
+                    <img src="assets/logo.png" alt="ThinkShift Logo" class="app-logo">
+                    <h1>
+                        <span class="title-en">ThinkShift</span>
+                        <span class="title-cn">思维转换</span>
+                    </h1>
                 </div>
+            </div>
+            <div class="header-right">
+                <button class="settings-btn">
+                    <img src="assets/icons/settings.svg" alt="设置">
+                </button>
+            </div>
+        </header>
+
+        <!-- 搜索栏 -->
+        <div class="search-bar">
+            <img src="assets/icons/search.svg" alt="搜索" class="search-icon">
+            <input type="text" id="searchInput" placeholder="搜索放松方式">
+        </div>
+
+        <!-- 主要功能区 -->
+        <main class="app-main">
+            <div class="function-grid" id="functionGrid">
+                <!-- 功能列表将由 JavaScript 动态生成 -->
             </div>
         </main>
     </div>
+
+    <script src="js/data.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html> 

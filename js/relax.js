@@ -1,430 +1,439 @@
 document.addEventListener('DOMContentLoaded', () => {
     // 获取DOM元素
-    const container = document.querySelector('.relax-container');
-    const breathingCircle = document.querySelector('.breathing-circle');
-    const breathingText = document.querySelector('.breathing-text');
-    const cycleCount = document.getElementById('cycleCount');
-    const continueBtn = document.getElementById('continueBtn');
-    const stepItems = document.querySelectorAll('.step-item');
-    const stepContents = document.querySelectorAll('.step-content');
-    const meditationText = document.getElementById('meditationText');
+    const timeDisplay = document.querySelector('.time');
+    const breathCircle = document.querySelector('.breath-circle');
+    const breathText = document.querySelector('.breath-text');
+    const breathCount = document.querySelector('.breath-count');
+    const breathGroup = document.querySelector('.breath-group');
+    const startBtn = document.querySelector('.start-btn');
+    const startTip = document.querySelector('.start-tip');
+    const progressBar = document.querySelector('.progress-bar');
+    const infoBtn = document.getElementById('infoBtn');
+    const modal = document.getElementById('modeInfoModal');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const modeList = document.querySelector('.mode-list');
+    const controlSection = document.querySelector('.control-section');
+    const pauseBtn = document.querySelector('.pause-btn');
+    const stopBtn = document.querySelector('.stop-btn');
+    const summaryModal = document.getElementById('summaryModal');
+    const summaryCloseBtn = document.getElementById('summaryCloseBtn');
+    const summaryDuration = document.getElementById('summaryDuration');
+    const summaryGroups = document.getElementById('summaryGroups');
+    const summaryBreaths = document.getElementById('summaryBreaths');
+    const summaryTip = document.getElementById('summaryTip');
 
-    // 音乐播放器元素
-    const playBtn = document.getElementById('playBtn');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const progressBar = document.querySelector('.progress');
-    const musicTitle = document.querySelector('.music-title');
-    const musicTime = document.querySelector('.music-time');
+    // 检查必要的DOM元素是否存在
+    if (!progressBar) {
+        console.error('Progress bar element not found');
+    }
 
-    // 添加呼吸次数计数器的显示/隐藏控制
-    const breathingCount = document.querySelector('.breathing-count');
+    // 动画相关变量
+    let animationFrame;
+    let startTime;
+    let currentScale = 0.8;
+    let targetScale = 0.8;
+    let isAnimating = false;
+    let currentDuration;
+
+    // 呼吸模式数据
+    const breathingModes = [
+        {
+            id: '4-4-4-4',
+            name: '方块呼吸法',
+            time: '4-4-4-4',
+            desc: '平静心绪的经典技巧',
+            config: {
+                inhale: 4,
+                holdIn: 4,
+                exhale: 4,
+                holdOut: 4
+            }
+        },
+        {
+            id: '4-7-8',
+            name: '放松呼吸法',
+            time: '4-7-8',
+            desc: '快速放松的天然镇静剂',
+            config: {
+                inhale: 4,
+                holdIn: 7,
+                exhale: 8,
+                holdOut: 0
+            }
+        },
+        {
+            id: '5-5-5',
+            name: '平衡呼吸法',
+            time: '5-5-5',
+            desc: '调节自律神经的平衡术',
+            config: {
+                inhale: 5,
+                holdIn: 5,
+                exhale: 5,
+                holdOut: 0
+            }
+        }
+    ];
 
     // 状态变量
-    let currentStep = 1;
-    let breathingCycles = 0;
-    let isPlaying = false;
-    let currentTrack = 0;
-    let currentBreathingState = 0;
+    let isBreathing = false;
+    let isPaused = false;
+    let currentGroup = 1;
+    let totalGroups = 5; // 默认5组
+    let currentMode = breathingModes[0].id;
+    let remainingTime = 300;
     let breathingInterval;
-    let animationStartTime = null;
-    let animationFrame = null;
-    let isFocusMode = false;
-    let focusModeTimeout = null;
-    let isMeditationComplete = false;
+    let focusModeTimeout;
+    let timerInterval;
+    let currentPhaseTime;
+    let currentPhase = 0;
 
-    // 音乐列表
-    const tracks = [
-        { title: '轻柔冥想', duration: '05:00' },
-        { title: '自然之声', duration: '04:30' },
-        { title: '深度放松', duration: '06:00' }
-    ];
+    // 训练数据
+    let trainingData = {
+        startTime: null,
+        duration: 0,
+        completedGroups: 0,
+        totalBreaths: 0
+    };
 
-    // 呼吸引导文本
-    const breathingStates = [
-        { 
-            text: '吸气', 
-            duration: 4000, 
-            startScale: 1, 
-            endScale: 2
-        },
-        { 
-            text: '屏息', 
-            duration: 4000, 
-            startScale: 2, 
-            endScale: 2
-        },
-        { 
-            text: '呼气', 
-            duration: 4000, 
-            startScale: 2, 
-            endScale: 1
-        },
-        { 
-            text: '屏息', 
-            duration: 4000, 
-            startScale: 1, 
-            endScale: 1
-        }
-    ];
-
-    // 冥想引导文本
-    const meditationGuides = [
-        "准备：保持呼吸的节奏，轻轻闭上眼睛。感受身体与地面接触。放松肩颈，下颌微松。",
-        "继续跟随呼吸的节奏，不刻意控制，只观察空气进出鼻孔。",
-        "你可能感到呼吸略微清凉进入，温暖离开。感受胸腹随之轻轻起伏。",
-        "当思绪出现，温柔地对它们说：'我看见你了'，然后回到呼吸上。",
-        "每一次将注意拉回呼吸，都是一次温柔的胜利。继续观察，放松。",
-        "保持呼吸的节奏，感受此刻的身体状态是否更松弛。",
-        "继续保持呼吸，微动手指脚趾，慢慢睁眼，带着这份宁静回到现实。"
-    ];
-
-    let meditationIndex = 0;
-
-    function showAndSpeak(text) {
-        if (!meditationText) return;
+    // 动画函数
+    function animate(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = timestamp - startTime;
         
-        meditationText.classList.remove('show');
-        setTimeout(() => {
-            meditationText.textContent = text;
-            meditationText.classList.add('show');
+        if (isAnimating) {
+            const progressRatio = Math.min(progress / (currentDuration * 1000), 1);
             
-            // 播放语音
-            const utter = new SpeechSynthesisUtterance(text);
-            utter.lang = 'zh-CN';
-            speechSynthesis.speak(utter);
-
-            // 最后一条时更新状态
-            if (meditationIndex === meditationGuides.length - 1) {
-                isMeditationComplete = true;
-                if (continueBtn) {
-                    continueBtn.textContent = '完成练习';
-                }
-            }
-        }, 500);
-    }
-
-    function startCountdown(callback) {
-        if (!breathingCircle || !breathingText) return;
-
-        const numbers = [3, 2, 1];
-        let currentIndex = 0;
-
-        // 创建倒计时文本元素
-        const countdownText = document.createElement('div');
-        countdownText.className = 'countdown-text';
-        breathingCircle.appendChild(countdownText);
-
-        // 显示准备文案
-        breathingText.style.display = 'block';
-        breathingText.textContent = '';
-        breathingText.style.opacity = '1';
-
-        function showNumber() {
-            if (currentIndex < numbers.length) {
-                countdownText.textContent = numbers[currentIndex];
-                countdownText.style.animation = 'none';
-                void countdownText.offsetWidth;
-                countdownText.style.animation = 'countdownAnimation 1s ease-out';
-                
-                currentIndex++;
-                setTimeout(showNumber, 1000);
+            // 使用线性插值实现匀速运动
+            const newScale = currentScale + (targetScale - currentScale) * progressRatio;
+            
+            breathCircle.style.transform = `scale(${newScale})`;
+            
+            if (progressRatio < 1) {
+                animationFrame = requestAnimationFrame(animate);
             } else {
-                setTimeout(() => {
-                    countdownText.remove();
-                    callback();
-                }, 1000);
+                isAnimating = false;
+                startTime = null;
             }
         }
-
-        showNumber();
     }
 
-    function animateBreathing(timestamp) {
-        if (!animationStartTime) animationStartTime = timestamp;
-        const elapsed = timestamp - animationStartTime;
-        const state = breathingStates[currentBreathingState];
-        const progress = Math.min(elapsed / state.duration, 1);
+    // 缓动函数
+    function easeInOutQuad(t) {
+        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
 
-        // 计算当前状态
-        const currentScale = state.startScale + (state.endScale - state.startScale) * progress;
-
-        // 更新动画状态
-        if (breathingCircle) {
-            breathingCircle.style.transform = `scale(${currentScale})`;
+    // 开始动画
+    function startAnimation(newTargetScale, duration) {
+        if (animationFrame) {
+            cancelAnimationFrame(animationFrame);
         }
+        currentScale = parseFloat(breathCircle.style.transform.replace('scale(', '').replace(')', '')) || 0.8;
+        targetScale = newTargetScale;
+        currentDuration = duration;
+        isAnimating = true;
+        startTime = null;
+        animationFrame = requestAnimationFrame(animate);
+    }
 
-        if (progress < 1) {
-            animationFrame = requestAnimationFrame(animateBreathing);
-        } else {
-            // 动画完成，进入下一个状态
-            currentBreathingState = (currentBreathingState + 1) % breathingStates.length;
-            if (currentBreathingState === 0) {
-                breathingCycles++;
-                if (cycleCount) {
-                    cycleCount.textContent = breathingCycles + 1;
+    // 暂停动画
+    function pauseAnimation() {
+        if (animationFrame) {
+            cancelAnimationFrame(animationFrame);
+        }
+        isAnimating = false;
+    }
+
+    // 渲染呼吸模式列表
+    function renderModeList() {
+        modeList.innerHTML = breathingModes.map(mode => `
+            <div class="mode-item-select" data-mode="${mode.id}">
+                <div class="mode-item-main">
+                    <div class="mode-name">${mode.name}</div>
+                    <div class="mode-time">${mode.time}</div>
+                </div>
+                <div class="mode-desc">${mode.desc}</div>
+            </div>
+        `).join('');
+
+        // 绑定模式选择事件
+        const modeItems = document.querySelectorAll('.mode-item-select');
+        modeItems.forEach(item => {
+            item.addEventListener('click', () => {
+                if (!isBreathing) {
+                    const mode = item.dataset.mode;
+                    updateSelectedMode(mode);
+                    closeModal();
                 }
-                
-                // 检查是否完成两组
-                if (breathingCycles >= 2) {
-                    if (continueBtn) {
-                        continueBtn.style.display = 'flex';
-                    }
-                }
-            }
-            startNextBreathingState();
-        }
+            });
+        });
     }
 
-    function startNextBreathingState() {
-        const state = breathingStates[currentBreathingState];
-        if (breathingText) {
-            breathingText.style.opacity = '0';
-            setTimeout(() => {
-                breathingText.textContent = state.text;
-                breathingText.style.opacity = '1';
-            }, 200);
-        }
-        animationStartTime = null;
-        animationFrame = requestAnimationFrame(animateBreathing);
-    }
-
-    function startBreathing() {
-        startNextBreathingState();
-    }
-
-    // 更新步骤显示
-    function updateSteps(step) {
-        stepItems.forEach((item, index) => {
-            if (index + 1 < step) {
-                item.classList.add('completed');
-                item.classList.remove('active');
-            } else if (index + 1 === step) {
+    // 更新选中的呼吸模式
+    function updateSelectedMode(modeId) {
+        currentMode = modeId;
+        const modeItems = document.querySelectorAll('.mode-item-select');
+        modeItems.forEach(item => {
+            if (item.dataset.mode === modeId) {
                 item.classList.add('active');
-                item.classList.remove('completed');
             } else {
-                item.classList.remove('active', 'completed');
+                item.classList.remove('active');
             }
-        });
-
-        stepContents.forEach((content, index) => {
-            content.classList.toggle('active', index + 1 === step);
         });
     }
 
-    // 重置专注模式计时器
-    function resetFocusModeTimer() {
-        if (!container) return;
-        
-        clearTimeout(focusModeTimeout);
-        if (!isFocusMode) {
-            focusModeTimeout = setTimeout(() => {
-                enterFocusMode();
-            }, 3000);
+    // 获取当前模式的配置
+    function getCurrentModeConfig() {
+        return breathingModes.find(mode => mode.id === currentMode).config;
+    }
+
+    // 初始化
+    renderModeList();
+    updateSelectedMode(currentMode);
+
+    // 弹出框控制
+    if (infoBtn && modal && modalCloseBtn) {
+        infoBtn.addEventListener('click', () => {
+            modal.classList.add('show');
+            if (isBreathing) {
+                pauseAnimation();
+            }
+        });
+
+        modalCloseBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    }
+
+    function closeModal() {
+        modal.classList.remove('show');
+        if (isBreathing) {
+            pauseAnimation();
         }
+    }
+
+    // 呼吸引导
+    function updatePhase() {
+        const mode = getCurrentModeConfig();
+        switch(currentPhase) {
+            case 0: // 吸气
+                breathText.textContent = '吸气';
+                currentPhaseTime = mode.inhale;
+                startAnimation(1.33, mode.inhale);
+                break;
+            case 1: // 屏息
+                breathText.textContent = '屏息';
+                currentPhaseTime = mode.holdIn;
+                pauseAnimation();
+                break;
+            case 2: // 呼气
+                breathText.textContent = '呼气';
+                currentPhaseTime = mode.exhale;
+                startAnimation(0.8, mode.exhale);
+                break;
+            case 3: // 屏息
+                breathText.textContent = '屏息';
+                currentPhaseTime = mode.holdOut;
+                pauseAnimation();
+                break;
+        }
+        breathCount.textContent = currentPhaseTime;
+    }
+
+    // 开始呼吸引导
+    function startBreathing() {
+        if (!progressBar) return;
+        
+        isBreathing = true;
+        startBtn.style.display = 'none';
+        startTip.style.display = 'none';
+        controlSection.classList.add('show');
+        
+        // 记录开始时间
+        trainingData.startTime = new Date();
+        trainingData.duration = 0;
+        trainingData.completedGroups = 0;
+        trainingData.totalBreaths = 0;
+        
+        const mode = getCurrentModeConfig();
+        currentPhase = 0;
+        currentGroup = 1;
+        updateGroupDisplay();
+        
+        // 开始计时器
+        timerInterval = setInterval(() => {
+            if (!isPaused) {
+                remainingTime--;
+                trainingData.duration++;
+                updateTimeDisplay();
+                if (progressBar) {
+                    progressBar.style.setProperty('--progress', `${(remainingTime / 300) * 100}%`);
+                }
+                
+                if (remainingTime <= 0) {
+                    clearInterval(timerInterval);
+                    clearInterval(breathingInterval);
+                    clearTimeout(focusModeTimeout);
+                    exitFocusMode();
+                    stopBreathing();
+                }
+            }
+        }, 1000);
+
+        updatePhase();
+        breathingInterval = setInterval(updatePhaseTimer, 1000);
+
+        // 3秒后进入专注模式
+        focusModeTimeout = setTimeout(enterFocusMode, 3000);
+    }
+
+    // 暂停/继续呼吸
+    function togglePause() {
+        isPaused = !isPaused;
+        if (isPaused) {
+            pauseAnimation();
+            clearInterval(breathingInterval);
+            clearTimeout(focusModeTimeout);
+            exitFocusMode();
+        } else {
+            updatePhase();
+            breathingInterval = setInterval(updatePhaseTimer, 1000);
+            focusModeTimeout = setTimeout(enterFocusMode, 3000);
+        }
+        pauseBtn.querySelector('img').src = isPaused ? '../assets/icons/play.svg' : '../assets/icons/pause.svg';
+    }
+
+    // 停止呼吸
+    function stopBreathing() {
+        if (!progressBar) return;
+        
+        isBreathing = false;
+        isPaused = false;
+        clearInterval(breathingInterval);
+        clearInterval(timerInterval);
+        clearTimeout(focusModeTimeout);
+        pauseAnimation();
+        breathCircle.style.transform = 'scale(0.8)';
+        startBtn.style.display = 'flex';
+        startTip.style.display = 'block';
+        controlSection.classList.remove('show');
+        remainingTime = 300;
+        updateTimeDisplay();
+        progressBar.style.setProperty('--progress', '0%');
+        exitFocusMode();
+        
+        // 显示训练总结
+        showTrainingSummary();
     }
 
     // 进入专注模式
     function enterFocusMode() {
-        if (!container) return;
-        isFocusMode = true;
-        container.classList.add('focus-mode');
+        document.body.classList.add('focus-mode');
     }
 
     // 退出专注模式
     function exitFocusMode() {
-        if (!container) return;
-        isFocusMode = false;
-        container.classList.remove('focus-mode');
-        resetFocusModeTimer();
+        document.body.classList.remove('focus-mode');
+    }
+
+    // 更新时间显示
+    function updateTimeDisplay() {
+        const minutes = Math.floor(remainingTime / 60);
+        const seconds = remainingTime % 60;
+        timeDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    // 更新组数显示
+    function updateGroupDisplay() {
+        breathGroup.textContent = `第 ${currentGroup} 组`;
+    }
+
+    // 显示训练总结
+    function showTrainingSummary() {
+        // 计算训练时长
+        const minutes = Math.floor(trainingData.duration / 60);
+        const seconds = trainingData.duration % 60;
+        summaryDuration.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         
-        if (breathingCycles >= 2) {
-            continueBtn.style.display = 'flex';
+        // 更新组数和呼吸次数
+        summaryGroups.textContent = `${trainingData.completedGroups}组`;
+        summaryBreaths.textContent = `${trainingData.totalBreaths}次`;
+        
+        // 根据训练时长给出建议
+        if (trainingData.duration < 60) {
+            summaryTip.textContent = '建议每天至少进行5分钟的训练，效果会更好。';
+        } else if (trainingData.duration < 300) {
+            summaryTip.textContent = '坚持训练可以帮助你更好地管理压力和情绪。';
+        } else {
+            summaryTip.textContent = '太棒了！继续保持这个训练强度，你会感受到明显的改善。';
         }
+        
+        // 显示弹窗
+        summaryModal.classList.add('show');
     }
 
-    // 监听用户交互
-    if (container) {
-        document.addEventListener('mousemove', () => {
-            if (isFocusMode) {
-                exitFocusMode();
-            } else {
-                resetFocusModeTimer();
-            }
-        });
-
-        document.addEventListener('touchstart', () => {
-            if (isFocusMode) {
-                exitFocusMode();
-            } else {
-                resetFocusModeTimer();
-            }
-        });
-
-        document.addEventListener('keydown', () => {
-            if (isFocusMode) {
-                exitFocusMode();
-            } else {
-                resetFocusModeTimer();
-            }
-        });
+    // 关闭训练总结
+    function closeSummaryModal() {
+        summaryModal.classList.remove('show');
     }
 
-    // 继续按钮点击处理
-    if (continueBtn) {
-        continueBtn.addEventListener('click', () => {
-            if (currentStep === 1) {
-                currentStep++;
-                updateSteps(currentStep);
-                // 停止呼吸动画
-                if (animationFrame) {
-                    cancelAnimationFrame(animationFrame);
+    // 倒计时更新
+    function updatePhaseTimer() {
+        if (!isPaused) {
+            if (currentPhaseTime > 1) {
+                currentPhaseTime--;
+                breathCount.textContent = currentPhaseTime;
+            } else {
+                currentPhase = (currentPhase + 1) % 4;
+                if (currentPhase === 0) {
+                    currentGroup++;
+                    trainingData.completedGroups++;
+                    trainingData.totalBreaths++;
+                    if (currentGroup > totalGroups) {
+                        stopBreathing();
+                        return;
+                    }
+                    updateGroupDisplay();
                 }
-                startMeditationGuide();
-                // 更新按钮文本
-                continueBtn.textContent = '完成练习';
-            } else if (currentStep === 2 && isMeditationComplete) {
-                // 完成所有练习
-                window.location.href = 'index.html';
+                updatePhase();
             }
-            resetFocusModeTimer();
-        });
-    }
-
-    // 修改音乐播放器控制，添加重置计时器
-    if (playBtn) {
-        playBtn.addEventListener('click', () => {
-            isPlaying = !isPlaying;
-            playBtn.innerHTML = isPlaying 
-                ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-                : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 4l14 8-14 8V4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-            
-            if (isPlaying) {
-                startProgressAnimation();
-            } else {
-                stopProgressAnimation();
-            }
-            resetFocusModeTimer();
-        });
-    }
-
-    // 冥想引导
-    function startMeditationGuide() {
-        const MEDITATION_STEP_DURATION = 20; // 每个冥想步骤持续20秒
-        let meditationIndex = 0;
-        let countdownInterval;
-
-        function showMeditationStep(index) {
-            if (index >= meditationGuides.length) {
-                // 所有步骤完成
-                clearInterval(countdownInterval);
-                continueBtn.style.display = 'flex';
-                continueBtn.textContent = '完成练习';
-                return;
-            }
-
-            let secondsLeft = MEDITATION_STEP_DURATION;
-            let countdownElement = document.querySelector('.meditation-countdown');
-
-            // 更新文本和倒计时
-            meditationText.style.opacity = '0';
-            setTimeout(() => {
-                meditationText.textContent = meditationGuides[index];
-                meditationText.style.opacity = '1';
-                
-                // 播放语音
-                const utter = new SpeechSynthesisUtterance(meditationGuides[index]);
-                utter.lang = 'zh-CN';
-                speechSynthesis.speak(utter);
-
-                // 开始倒计时
-                clearInterval(countdownInterval);
-                countdownInterval = setInterval(() => {
-                    secondsLeft--;
-                    if (countdownElement) {
-                        countdownElement.textContent = `${secondsLeft}秒`;
-                    }
-                    
-                    if (secondsLeft <= 0) {
-                        clearInterval(countdownInterval);
-                        showMeditationStep(index + 1);
-                    }
-                }, 1000);
-            }, 500);
         }
-
-        // 开始显示第一步
-        setTimeout(() => {
-            showMeditationStep(0);
-        }, 300);
     }
 
-    // 进度条动画
-    let progressAnimation;
-
-    function startProgressAnimation() {
-        let progress = 0;
-        progressBar.style.width = '0%';
-        
-        progressAnimation = setInterval(() => {
-            progress += 0.1;
-            progressBar.style.width = `${progress}%`;
-            
-            if (progress >= 100) {
-                nextBtn.click();
-            }
-        }, 300);
-    }
-
-    function stopProgressAnimation() {
-        clearInterval(progressAnimation);
-    }
-
-    function showStep(stepNumber) {
-        const steps = document.querySelectorAll(".step-content");
-        steps.forEach((step, index) => {
-            if (index + 1 === stepNumber) {
-                step.classList.add("active");
-            }
-        });
-    }
-
-    function startMeditation() {
-        showStep(2);
-        showAndSpeak(meditationGuides[0]);
-    }
-
-    function startBreathingExercise() {
-        showStep(1);
-        startCountdown(() => {
+    // 事件监听
+    startBtn.addEventListener('click', () => {
+        if (!isBreathing) {
             startBreathing();
-        });
-    }
-
-    // 初始化
-    function init() {
-        if (breathingCircle && breathingText && cycleCount) {
-            updateSteps(currentStep);
-            startCountdown(() => {
-                startBreathing();
-            });
-            resetFocusModeTimer();
         }
-    }
-
-    // 更新CSS样式
-    const style = document.createElement('style');
-    style.textContent = `
-        .breathing-text {
-            transition: opacity 0.3s ease;
-        }
-    `;
-    document.head.appendChild(style);
-
-    // 双击呼吸次数计数器切换显示/隐藏状态
-    breathingCount.addEventListener('dblclick', () => {
-        breathingCount.classList.toggle('hidden');
     });
 
-    init();
+    pauseBtn.addEventListener('click', togglePause);
+    stopBtn.addEventListener('click', stopBreathing);
+
+    // 监听用户交互以退出专注模式
+    document.addEventListener('mousemove', handleUserInteraction);
+    document.addEventListener('touchstart', handleUserInteraction);
+    document.addEventListener('click', handleUserInteraction);
+
+    function handleUserInteraction() {
+        if (isBreathing) {
+            clearTimeout(focusModeTimeout);
+            exitFocusMode();
+            focusModeTimeout = setTimeout(enterFocusMode, 3000);
+        }
+    }
+
+    // 事件监听
+    summaryCloseBtn.addEventListener('click', closeSummaryModal);
+    summaryModal.addEventListener('click', (e) => {
+        if (e.target === summaryModal) {
+            closeSummaryModal();
+        }
+    });
+
+    // 初始化
+    updateTimeDisplay();
 }); 

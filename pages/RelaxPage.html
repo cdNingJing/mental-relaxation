@@ -3,69 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>放松一下 - 疲劳恢复助手</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=ZCOOL+QingKe+HuangYou&family=ZCOOL+XiaoWei&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/style.css">
+    <title>呼吸引导</title>
     <link rel="stylesheet" href="../css/relax.css">
 </head>
 <body>
-    <div class="relax-container">
-        <!-- 顶部导航 -->
-        <header class="relax-header">
-            <button class="back-btn" onclick="history.back()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
-            <h1>放松一下</h1>
-        </header>
+    <div class="container">
+        <!-- 返回标签 -->
+        <a href="javascript:history.back()" class="back-link">
+            <img src="../assets/icons/back.svg" alt="返回">
+        </a>
 
-        <!-- 步骤进度 -->
-        <div class="step-progress">
-            <div class="step-item active" data-step="1">
-                <div class="step-number">1</div>
-                <div class="step-label">呼吸练习</div>
-            </div>
-            <div class="step-item" data-step="2">
-                <div class="step-number">2</div>
-                <div class="step-label">正念冥想</div>
+        <!-- 信息图标 -->
+        <button class="info-btn" id="infoBtn">
+            <img src="../assets/icons/info.svg" alt="信息">
+        </button>
+
+        <!-- 时间显示 -->
+        <div class="time">05:00</div>
+
+        <!-- 底部进度条 -->
+        <div class="progress-bar"></div>
+
+        <!-- 呼吸圆圈 -->
+        <div class="breath-circle">
+            <div class="breath-inner-circle">
+                <span class="breath-text">吸气</span>
+                <span class="breath-count">4</span>
+                <span class="breath-group">第 1 组</span>
             </div>
         </div>
 
-        <!-- 主要内容区 -->
-        <main class="relax-main">
-            <!-- 步骤1：呼吸引导动画 -->
-            <div class="step-content active" id="step1">
-                <div class="breathing-container">
-                    <div class="breathing-circle">
-                        <div class="breathing-text"></div>
-                    </div>
-                    <div class="breathing-instruction">跟随动画节奏呼吸</div>
-                    <div class="breathing-count">第 <span id="cycleCount">1</span> 组</div>
-                </div>
-            </div>
+        <!-- 控制按钮 -->
+        <div class="control-section">
+            <button class="control-btn pause-btn">
+                <img src="../assets/icons/pause.svg" alt="暂停">
+            </button>
+            <button class="control-btn stop-btn">
+                <img src="../assets/icons/stop.svg" alt="结束">
+            </button>
+        </div>
 
-            <!-- 步骤2：正念冥想 -->
-            <div class="step-content" id="step2">
-                <div class="meditation-container">
-                    <div class="meditation-content">
-                        <div class="meditation-countdown">20秒</div>
-                        <div class="meditation-text" id="meditationText"></div>
-                    </div>
-                    <div class="meditation-instruction">跟随引导语冥想</div>
-                </div>
-            </div>
-
-            <!-- 继续按钮 -->
-            <button class="continue-btn" id="continueBtn">
-                下一步
+        <!-- 开始按钮 -->
+        <div class="start-section">
+            <button class="start-btn">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8 5v14l11-7z" fill="white"/>
                 </svg>
             </button>
-        </main>
+            <div class="start-tip">3秒后进入专注模式</div>
+        </div>
+
+        <!-- 呼吸模式弹出框 -->
+        <div class="modal" id="modeInfoModal">
+            <div class="modal-content">
+                <button class="modal-close" id="modalCloseBtn">
+                    <img src="../assets/icons/close.svg" alt="关闭">
+                </button>
+                <h3>选择呼吸模式</h3>
+                <div class="mode-list">
+                    <!-- 模式列表将由 JavaScript 动态渲染 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 结束弹窗 -->
+        <div class="modal" id="summaryModal">
+            <div class="modal-content">
+                <h3>训练总结</h3>
+                <div class="summary-content">
+                    <div class="summary-item">
+                        <span class="summary-label">训练时长</span>
+                        <span class="summary-value" id="summaryDuration">05:00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">完成组数</span>
+                        <span class="summary-value" id="summaryGroups">5组</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">呼吸次数</span>
+                        <span class="summary-value" id="summaryBreaths">20次</span>
+                    </div>
+                    <div class="summary-tip" id="summaryTip">
+                        坚持训练可以帮助你更好地管理压力和情绪。
+                    </div>
+                </div>
+                <button class="modal-close" id="summaryCloseBtn">
+                    <img src="../assets/icons/close.svg" alt="关闭">
+                </button>
+            </div>
+        </div>
     </div>
 
     <script src="../js/relax.js"></script>

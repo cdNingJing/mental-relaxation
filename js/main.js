@@ -1,101 +1,107 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // 检查是否已经显示过入场动画
-    const hasShownSplash = localStorage.getItem('hasShownSplash');
-    
-    if (!hasShownSplash) {
-        // 首次进入，显示入场动画
-        const splashScreen = document.querySelector('.splash-screen');
-        splashScreen.style.display = 'flex';
+// 功能区视图管理
+class FunctionGridView {
+    constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        this.init();
+    }
+
+    init() {
+        this.renderFunctions();
+        this.bindEvents();
+    }
+
+    renderFunctions() {
+        const html = functionData.map(item => this.createFunctionItemHTML(item)).join("");
+        this.container.innerHTML = html;
+    }
+
+    createFunctionItemHTML(item) {
+        const inactiveClass = !item.isActive ? 'inactive' : '';
         
-        // 动画结束后保存状态
-        setTimeout(() => {
-            localStorage.setItem('hasShownSplash', 'true');
-        }, 3500); // 动画总时长 3.5 秒
-    } else {
-        // 已经显示过动画，直接隐藏启动页并显示卡片
-        const splashScreen = document.querySelector('.splash-screen');
-        splashScreen.style.display = 'none';
-        const appContainer = document.querySelector('.app-container');
-        appContainer.style.opacity = '1';
-        appContainer.style.transform = 'translateY(0)';
-        
-        // 立即显示所有卡片
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-            card.style.animation = 'none';
+        return `
+            <div class="function-item ${inactiveClass}" id="${item.id}">
+                <div class="function-icon" style="background: linear-gradient(135deg, ${item.gradient[0]} 0%, ${item.gradient[1]} 100%)">
+                    <img src="${item.icon}" alt="${item.title}">
+                </div>
+                <h3>${item.title}</h3>
+                <p>${item.description}</p>
+            </div>
+        `;
+    }
+
+    bindEvents() {
+        this.container.addEventListener("click", (e) => {
+            const functionItem = e.target.closest(".function-item");
+            if (!functionItem) return;
+
+            if (functionItem.classList.contains('inactive')) {
+                // 如果功能未激活，显示提示信息
+                this.showInactiveTip(functionItem);
+                return;
+            }
+
+            this.handleFunctionClick(functionItem.id);
         });
     }
 
-    // 获取所有卡片元素
-    const cards = document.querySelectorAll('.card');
-    
-    // 为每张卡片添加交互效果
-    cards.forEach(card => {
-        // 鼠标移动效果
-        card.addEventListener('mousemove', handleMouseMove);
-        // 鼠标离开效果
-        card.addEventListener('mouseleave', handleMouseLeave);
-        // 点击效果
-        card.addEventListener('click', handleCardClick);
-    });
-
-    // 处理鼠标移动效果
-    function handleMouseMove(e) {
-        const card = e.currentTarget;
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        // 计算鼠标位置相对于卡片中心的偏移
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateX = (y - centerY) / 10;
-        const rotateY = (centerX - x) / 10;
-
-        // 应用3D转换效果
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+    showInactiveTip(element) {
+        // 可以在这里添加更多的提示效果
+        element.style.animation = 'shake 0.5s ease-in-out';
+        setTimeout(() => {
+            element.style.animation = '';
+        }, 500);
     }
 
-    // 处理鼠标离开效果
-    function handleMouseLeave(e) {
-        const card = e.currentTarget;
-        card.style.transform = '';
+    handleFunctionClick(functionId) {
+        const functionItem = functionData.find(item => item.id === functionId);
+        if (functionItem && functionItem.isActive && functionItem.route) {
+            window.location.href = functionItem.route;
+        }
+    }
+}
+
+// 搜索功能
+class SearchHandler {
+    constructor() {
+        this.searchInput = document.getElementById("searchInput");
+        this.functionGrid = document.getElementById("functionGrid");
+        this.init();
     }
 
-    // 处理卡片点击
-    function handleCardClick(e) {
-        const card = e.currentTarget;
-        const cardId = card.id;
-        
-        // 根据卡片ID跳转到对应页面
-        switch(cardId) {
-            case 'relaxCard':
-                window.location.href = 'pages/RelaxPage.html';
-                break;
-            case 'focusCard':
-                window.location.href = 'pages/FocusPage.html';
-                break;
-            case 'moodCard':
-                window.location.href = 'pages/moodReliefPage.html';
-                break;
-            case 'cognitiveCard':
-                window.location.href = 'pages/cognitivePage.html';
-                break;
+    init() {
+        if (this.searchInput) {
+            this.searchInput.addEventListener("input", this.handleSearch.bind(this));
         }
     }
 
-    // 添加波浪动画效果
-    function initWaveEffects() {
-        cards.forEach(card => {
-            const wave = card.querySelector('.card-wave');
-            if (wave) {
-                wave.style.opacity = '0.3';
-            }
+    handleSearch(event) {
+        const searchTerm = event.target.value.toLowerCase().trim();
+        const functionItems = this.functionGrid.querySelectorAll(".function-item");
+
+        functionItems.forEach(item => {
+            const title = item.querySelector("h3").textContent.toLowerCase();
+            const description = item.querySelector("p").textContent.toLowerCase();
+            const isMatch = title.includes(searchTerm) || description.includes(searchTerm);
+            
+            item.classList.toggle("hidden", !isMatch);
         });
     }
+}
 
-    // 初始化波浪效果
-    initWaveEffects();
+// 添加抖动动画的关键帧
+const style = document.createElement('style');
+style.textContent = `
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+}`;
+document.head.appendChild(style);
+
+// 初始化应用
+document.addEventListener("DOMContentLoaded", () => {
+    // 初始化功能区
+    new FunctionGridView("functionGrid");
+    // 初始化搜索功能
+    new SearchHandler();
 }); 

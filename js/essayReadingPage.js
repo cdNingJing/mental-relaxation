@@ -312,7 +312,7 @@ function initEssayPage(essay = null) {
 
         // 处理内容，添加填空
         let content = processContentWithInputs(currentEssay.content, currentEssay.answers);
-        content = content.replace(/{{input1}}/g, '<span class="input-word"><input type="text" maxlength="10"></span>');
+        content = content.replace(/{{input1}}/g, '<span class="input-word"><input type="text"></span>');
 
         // 设置内容
         document.querySelector('.essay-body').innerHTML = formatContent(content);

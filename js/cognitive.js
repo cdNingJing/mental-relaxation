@@ -7,6 +7,11 @@ class CognitiveTrainer {
         this.isPlaying = false;
         this.isLevelingUp = false;
         this.achievements = new Set();
+        this.timerAnimation = null;
+        this.levelUpScore = 1000; // 升级所需分数
+        this.comboThreshold = 0.7; // 连击判定阈值（70%）
+        this.animationFrame = null;
+        this.startTime = null;
         
         // 定义颜色映射
         this.colorMap = {
@@ -18,61 +23,99 @@ class CognitiveTrainer {
         };
         
         this.shapes = ['★', '●', '◆', '■', '▲'];
-        this.words = Object.keys(this.colorMap); // 使用颜色名称作为文字选项
+        this.words = Object.keys(this.colorMap);
         
+        // 初始化 DOM 元素
+        this.initElements();
+        this.initEventListeners();
+
+        // 初始化游戏状态
+        this.hideGameContainer();
+    }
+
+    initElements() {
+        // 页面元素
+        this.pageContainer = document.querySelector('.cognitive-page-container');
+        this.gameContainer = document.getElementById('cognitive-game-container');
+        
+        // 游戏元素
         this.stimulus = document.getElementById('stimulus');
         this.timerProgress = document.getElementById('timerProgress');
         this.startButton = document.getElementById('startButton');
-        this.gameArea = document.querySelector('.game-area');
-        this.exitFullscreenButton = document.getElementById('exitFullscreenButton');
+        this.continueButton = document.getElementById('continueButton');
+        this.retryButton = document.getElementById('retryButton');
+        this.nextButton = document.getElementById('nextButton');
         
-        this.initEventListeners();
-        this.initAudio();
+        // 状态显示
+        this.currentLevel = document.getElementById('currentLevel');
+        this.currentCombo = document.getElementById('currentCombo');
+        this.currentScore = document.getElementById('currentScore');
         
-        // 添加规则按钮和返回按钮的事件监听
-        document.getElementById('rulesButton').addEventListener('click', () => {
-            document.getElementById('gameRules').classList.add('active');
-        });
+        // 弹窗元素
+        this.helpModal = document.querySelector('.help-modal');
+        this.closeHelp = document.querySelector('.close-help');
+        this.helpButton = document.querySelector('.help-button');
+        this.modalOverlay = document.querySelector('.modal-overlay');
+        this.resultModal = document.querySelector('.result-modal');
+        this.resultTime = document.querySelector('.result-time');
+        this.resultComment = document.querySelector('.result-comment');
         
-        document.getElementById('rulesClose').addEventListener('click', () => {
-            document.getElementById('gameRules').classList.remove('active');
-        });
-        
-        document.getElementById('backButton').addEventListener('click', () => {
-            window.history.back();
-        });
+        // 全屏按钮
+        this.exitFullscreen = document.querySelector('.exit-fullscreen');
+    }
 
-        // 添加全屏关闭按钮事件监听
-        this.exitFullscreenButton.addEventListener('click', () => {
-            this.toggleFullscreen();
-        });
+    hideGameContainer() {
+        if (this.gameContainer) {
+            this.gameContainer.style.display = 'none';
+            this.gameContainer.classList.remove('active');
+        }
+        if (this.pageContainer) {
+            this.pageContainer.style.display = 'block';
+        }
+    }
+
+    showGameContainer() {
+        if (this.pageContainer) {
+            this.pageContainer.style.display = 'none';
+        }
+        if (this.gameContainer) {
+            this.gameContainer.style.display = 'block';
+            this.gameContainer.classList.add('active');
+        }
     }
 
     initEventListeners() {
+        // 开始游戏按钮
         this.startButton.addEventListener('click', () => this.startGame());
+        this.continueButton.addEventListener('click', () => this.startGame());
+        
+        // 游戏控制按钮
         document.getElementById('correctBtn').addEventListener('click', () => this.checkAnswer(true));
         document.getElementById('wrongBtn').addEventListener('click', () => this.checkAnswer(false));
         
+        // 计时器动画结束事件
         this.timerProgress.addEventListener('animationend', () => {
             if (this.isPlaying && !this.isLevelingUp) {
                 this.handleTimeout();
             }
         });
-    }
-
-    initAudio() {
-        this.sounds = {
-            correct: new Audio('../assets/correct.mp3'),
-            wrong: new Audio('../assets/wrong.mp3'),
-            levelUp: new Audio('../assets/levelup.mp3'),
-            combo: new Audio('../assets/combo.mp3')
-        };
+        
+        // 帮助弹窗
+        this.helpButton.addEventListener('click', () => this.showHelp());
+        this.closeHelp.addEventListener('click', () => this.hideHelp());
+        
+        // 结果弹窗按钮
+        this.retryButton.addEventListener('click', () => this.retryGame());
+        this.nextButton.addEventListener('click', () => this.nextLevel());
+        
+        // 退出按钮
+        this.exitFullscreen.addEventListener('click', () => this.exitGame());
     }
 
     async toggleFullscreen() {
         try {
             if (!document.fullscreenElement) {
-                await this.gameArea.requestFullscreen();
+                await this.gameContainer.requestFullscreen();
             } else {
                 await document.exitFullscreen();
             }
@@ -84,9 +127,57 @@ class CognitiveTrainer {
     startGame() {
         this.isPlaying = true;
         this.isLevelingUp = false;
-        this.startButton.style.display = 'none';
-        this.stimulus.classList.add('active');
-        this.toggleFullscreen(); // 进入全屏模式
+        this.score = 0;
+        this.combo = 0;
+        this.level = 1;
+        this.timeLimit = 2000; // 重置时间限制
+        
+        // 显示游戏容器
+        this.showGameContainer();
+        
+        // 更新显示
+        this.updateDisplay();
+        
+        // 开始新回合
+        this.newRound();
+        
+        // 尝试进入全屏
+        this.toggleFullscreen();
+    }
+
+    showHelp() {
+        this.helpModal.style.display = 'block';
+        this.modalOverlay.style.display = 'block';
+    }
+
+    hideHelp() {
+        this.helpModal.style.display = 'none';
+        this.modalOverlay.style.display = 'none';
+    }
+
+    showResult(time, comment) {
+        this.resultTime.textContent = time;
+        this.resultComment.textContent = comment;
+        this.resultModal.style.display = 'block';
+        this.modalOverlay.style.display = 'block';
+    }
+
+    hideResult() {
+        this.resultModal.style.display = 'none';
+        this.modalOverlay.style.display = 'none';
+    }
+
+    retryGame() {
+        this.hideResult();
+        this.score = 0;
+        this.combo = 0;
+        this.level = 1;
+        this.updateDisplay();
+        this.newRound();
+    }
+
+    nextLevel() {
+        this.hideResult();
         this.newRound();
     }
 
@@ -121,22 +212,18 @@ class CognitiveTrainer {
         if (!this.isPlaying || this.isLevelingUp) return;
         
         this.currentChallenge = this.generateChallenge();
-        this.resetTimer();
         this.displayChallenge();
-    }
-
-    resetTimer() {
-        // 移除之前的动画
-        this.timerProgress.classList.remove('active');
-        // 强制重排以重置动画
-        void this.timerProgress.offsetWidth;
-        // 添加新的动画
-        this.timerProgress.classList.add('active');
+        // 在显示新的挑战后重置计时器
+        setTimeout(() => this.resetTimer(), 50);
     }
 
     displayChallenge() {
         const shapeElement = this.stimulus.querySelector('.stimulus-shape');
         const wordElement = this.stimulus.querySelector('.stimulus-word');
+        
+        // 先隐藏元素
+        shapeElement.style.opacity = '0';
+        wordElement.style.opacity = '0';
         
         // 设置形状的样式
         shapeElement.style.color = this.currentChallenge.color;
@@ -145,7 +232,6 @@ class CognitiveTrainer {
         
         // 设置文字的样式
         wordElement.style.textShadow = '1px 1px 2px rgba(0, 0, 0, 0.15)';
-        // 为浅色文字添加描边效果
         const color = this.currentChallenge.color;
         const isLightColor = this.isLightColor(color);
         if (isLightColor) {
@@ -156,6 +242,49 @@ class CognitiveTrainer {
             wordElement.style.textStroke = 'none';
         }
         wordElement.textContent = this.currentChallenge.word;
+        
+        // 使用 requestAnimationFrame 确保在下一帧显示元素
+        requestAnimationFrame(() => {
+            shapeElement.style.opacity = '1';
+            wordElement.style.opacity = '1';
+        });
+    }
+
+    resetTimer() {
+        // 取消之前的动画帧
+        if (this.animationFrame) {
+            cancelAnimationFrame(this.animationFrame);
+        }
+        
+        // 重置进度条
+        const progress = this.timerProgress;
+        progress.style.width = '100%';
+        
+        // 记录开始时间
+        this.startTime = performance.now();
+        
+        // 开始动画
+        this.animateProgress();
+        
+        // 设置超时处理
+        this.timerAnimation = setTimeout(() => {
+            if (this.isPlaying && !this.isLevelingUp) {
+                this.handleTimeout();
+            }
+        }, this.timeLimit);
+    }
+
+    animateProgress() {
+        const progress = this.timerProgress;
+        const elapsed = performance.now() - this.startTime;
+        const progressRatio = 1 - (elapsed / this.timeLimit);
+        
+        if (progressRatio > 0) {
+            progress.style.width = `${progressRatio * 100}%`;
+            this.animationFrame = requestAnimationFrame(() => this.animateProgress());
+        } else {
+            progress.style.width = '0%';
+        }
     }
 
     // 判断颜色是否为浅色
@@ -174,49 +303,84 @@ class CognitiveTrainer {
     checkAnswer(userAnswer) {
         if (!this.isPlaying || this.isLevelingUp) return;
         
-        this.timerProgress.classList.remove('active');
+        // 停止计时器和动画
+        if (this.timerAnimation) {
+            clearTimeout(this.timerAnimation);
+            this.timerAnimation = null;
+        }
+        if (this.animationFrame) {
+            cancelAnimationFrame(this.animationFrame);
+        }
+        
+        const progress = this.timerProgress;
         const correctAnswer = !this.currentChallenge.hasConflict;
         
         if (userAnswer === correctAnswer) {
-            const baseScore = 100;
-            const comboBonus = this.combo * 50;
-            const totalScore = baseScore + comboBonus;
+            // 基于进度条计算基础分数（最高100分）
+            const computedStyle = window.getComputedStyle(progress);
+            const width = parseFloat(computedStyle.width);
+            const progressRatio = width / 100;
+            const baseScore = Math.round(progressRatio * 100);
+            let totalScore = baseScore;
+            
+            // 只有在进度大于70%时才计入连击
+            if (progressRatio >= this.comboThreshold) {
+                this.combo++;
+                const comboBonus = this.combo * 20; // 每次连击额外加20分
+                totalScore += comboBonus;
+                
+                if (this.combo > 1) {
+                    this.showComboEffect();
+                }
+            } else {
+                this.combo = 0; // 进度低于70%重置连击
+            }
             
             this.score += totalScore;
-            this.combo++;
-            
-            // 同时显示分数和连击效果
-            const effectsContainer = document.getElementById('effectsContainer');
-            effectsContainer.innerHTML = ''; // 清空之前的特效
-            
-            if (this.combo > 1) {
-                this.showComboEffect();
-            }
             this.showScorePopup(totalScore);
             
-            this.sounds.correct.play();
-            
-            if (this.combo % 5 === 0) {
+            // 检查是否达到升级分数
+            if (this.score >= this.levelUpScore) {
                 this.levelUp();
-                return; // 升级时不立即开始新回合
+                return;
             }
             
             this.checkAchievements();
         } else {
+            // 回答错误时减少50分
+            this.score = Math.max(0, this.score - 50);
             this.combo = 0;
-            this.sounds.wrong.play();
+            
+            // 显示错误效果和减少的分数
             this.stimulus.classList.add('shake');
-            setTimeout(() => this.stimulus.classList.remove('shake'), 500);
+            this.showScorePopup(-50);
+            
+            setTimeout(() => {
+                this.stimulus.classList.remove('shake');
+                // 生成新的挑战
+                this.currentChallenge = this.generateChallenge();
+                this.displayChallenge();
+            }, 500);
         }
         
+        // 重置进度条
+        progress.style.width = '100%';
+        
+        // 更新显示
         this.updateDisplay();
-        setTimeout(() => this.newRound(), 300);
+        
+        // 开始新回合
+        setTimeout(() => {
+            this.currentChallenge = this.generateChallenge();
+            this.displayChallenge();
+            this.resetTimer();
+        }, 300);
     }
 
     showScorePopup(score) {
         const popup = document.createElement('div');
-        popup.className = 'score-popup';
-        popup.textContent = `+${score}`;
+        popup.className = `score-popup ${score >= 0 ? 'positive' : 'negative'}`;
+        popup.textContent = score >= 0 ? score : score;
         document.getElementById('effectsContainer').appendChild(popup);
         setTimeout(() => popup.remove(), 500);
     }
@@ -230,9 +394,14 @@ class CognitiveTrainer {
     }
 
     levelUp() {
-        this.isLevelingUp = true; // 标记开始升级
+        this.isLevelingUp = true;
         this.level++;
-        this.timeLimit = Math.max(500, 2000 - (this.level-1)*150);
+        
+        // 更新下一级所需分数
+        this.levelUpScore = this.level * 1000;
+        
+        // 减少时间限制，但不低于500ms
+        this.timeLimit = Math.max(500, 2000 - (this.level - 1) * 150);
         
         // 隐藏游戏元素
         this.stimulus.style.opacity = '0';
@@ -243,17 +412,16 @@ class CognitiveTrainer {
         effect.innerHTML = `
             <div class="level-up-text">Level Up!</div>
             <div class="level-up-text">Level ${this.level}</div>
+            <div class="level-up-text">目标分数: ${this.levelUpScore}</div>
+            <div class="level-up-text">时间限制: ${(this.timeLimit / 1000).toFixed(1)}秒</div>
         `;
         document.getElementById('effectsContainer').appendChild(effect);
         
-        this.sounds.levelUp.play();
-        
-        // 等待动画完成后继续游戏
         setTimeout(() => {
             effect.remove();
             this.stimulus.style.opacity = '1';
-            this.isLevelingUp = false; // 标记升级结束
-            this.newRound(); // 开始新回合
+            this.isLevelingUp = false;
+            this.newRound();
         }, 1500);
     }
 
@@ -267,16 +435,15 @@ class CognitiveTrainer {
         comboCard.setAttribute('data-combo', this.combo);
         
         // 根据连击数更新样式
-        if (this.combo >= 20) {
-            comboCard.style.background = 'linear-gradient(135deg, var(--combo-color-5), var(--combo-color-4))';
-        } else if (this.combo >= 15) {
-            comboCard.style.background = 'linear-gradient(135deg, var(--combo-color-4), var(--combo-color-3))';
-        } else if (this.combo >= 10) {
-            comboCard.style.background = 'linear-gradient(135deg, var(--combo-color-3), var(--combo-color-2))';
+        if (this.combo >= 10) {
+            comboCard.style.background = 'var(--gradient-primary)';
+            comboCard.querySelector('.status-value').style.color = 'white';
         } else if (this.combo >= 5) {
-            comboCard.style.background = 'linear-gradient(135deg, var(--combo-color-2), var(--combo-color-1))';
+            comboCard.style.background = 'var(--primary-light)';
+            comboCard.querySelector('.status-value').style.color = 'white';
         } else {
-            comboCard.style.background = '';
+            comboCard.style.background = 'var(--bg-light)';
+            comboCard.querySelector('.status-value').style.color = 'var(--primary-color)';
         }
         
         // 添加连击动画效果
@@ -321,11 +488,84 @@ class CognitiveTrainer {
     handleTimeout() {
         if (!this.isPlaying || this.isLevelingUp) return;
         
+        // 取消动画帧
+        if (this.animationFrame) {
+            cancelAnimationFrame(this.animationFrame);
+        }
+        
+        // 重置进度条
+        const progress = this.timerProgress;
+        progress.style.width = '0%';
+        
         this.combo = 0;
         this.updateDisplay();
-        this.newRound();
+        
+        // 添加视觉反馈
+        this.stimulus.classList.add('shake');
+        setTimeout(() => this.stimulus.classList.remove('shake'), 500);
+        
+        // 开始新回合
+        setTimeout(() => this.newRound(), 300);
+    }
+
+    async exitGame() {
+        // 停止游戏
+        this.isPlaying = false;
+        
+        // 清除计时器
+        if (this.timerAnimation) {
+            clearTimeout(this.timerAnimation);
+            this.timerAnimation = null;
+        }
+        
+        // 重置游戏状态
+        this.score = 0;
+        this.combo = 0;
+        this.level = 1;
+        
+        // 退出全屏
+        if (document.fullscreenElement) {
+            try {
+                await document.exitFullscreen();
+            } catch (err) {
+                console.error('退出全屏失败:', err);
+            }
+        }
+        
+        // 隐藏游戏容器，显示主页
+        this.hideGameContainer();
+        
+        // 重置显示
+        this.updateDisplay();
+        
+        // 隐藏所有可能的弹窗
+        this.hideHelp();
+        this.hideResult();
+        
+        // 重置进度条
+        this.timerProgress.classList.remove('active');
+        this.timerProgress.style.animation = 'none';
+    }
+
+    // 添加调试方法
+    toggleDebug() {
+        const progress = this.timerProgress;
+        progress.classList.toggle('debug');
+        console.log('Debug mode:', progress.classList.contains('debug'));
+        
+        // 输出当前状态
+        console.log('Timer state:', {
+            timeLimit: this.timeLimit,
+            isPlaying: this.isPlaying,
+            isLevelingUp: this.isLevelingUp,
+            hasActiveClass: progress.classList.contains('active'),
+            animation: progress.style.animation,
+            transform: progress.style.transform
+        });
     }
 }
 
 // 启动游戏
-new CognitiveTrainer(); 
+document.addEventListener('DOMContentLoaded', () => {
+    new CognitiveTrainer();
+}); 

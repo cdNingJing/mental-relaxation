@@ -252,6 +252,10 @@ document.addEventListener('DOMContentLoaded', () => {
         startTip.style.display = 'none';
         controlSection.classList.add('show');
         
+        // 禁用信息图标
+        infoBtn.style.pointerEvents = 'none';
+        infoBtn.style.opacity = '0.5';
+        
         // 记录开始时间
         trainingData.startTime = new Date();
         trainingData.duration = 0;
@@ -324,6 +328,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTimeDisplay();
         progressBar.style.setProperty('--progress', '0%');
         exitFocusMode();
+        
+        // 启用信息图标
+        infoBtn.style.pointerEvents = 'auto';
+        infoBtn.style.opacity = '1';
         
         // 显示训练总结
         showTrainingSummary();

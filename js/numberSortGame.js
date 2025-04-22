@@ -7,8 +7,7 @@ class NumberSortGame {
         this.numbers = [];
         this.isProcessingClick = false;
         this.bestTimes = {};
-        this.currentGridRows = 3;
-        this.currentGridCols = 3;
+        this.currentGridSize = 3;
         
         // 从本地存储加载游戏状态
         this.loadGameState();
@@ -26,8 +25,7 @@ class NumberSortGame {
         const gameState = {
             currentLevel: this.currentLevel,
             bestTimes: this.bestTimes,
-            currentGridRows: this.currentGridRows,
-            currentGridCols: this.currentGridCols
+            currentGridSize: this.currentGridSize
         };
         localStorage.setItem('numberSortGameState', JSON.stringify(gameState));
     }
@@ -39,9 +37,8 @@ class NumberSortGame {
             const gameState = JSON.parse(savedState);
             this.currentLevel = gameState.currentLevel;
             this.bestTimes = gameState.bestTimes;
-            this.currentGridRows = gameState.currentGridRows;
-            this.currentGridCols = gameState.currentGridCols;
-            this.maxNumber = this.currentGridRows * this.currentGridCols;
+            this.currentGridSize = gameState.currentGridSize;
+            this.maxNumber = this.currentGridSize * this.currentGridSize;
         }
     }
 
@@ -50,53 +47,15 @@ class NumberSortGame {
         // 从本地存储加载游戏状态
         this.loadGameState();
         // 设置当前关卡的数字数量
-        this.maxNumber = this.currentGridRows * this.currentGridCols;
+        this.maxNumber = this.currentGridSize * this.currentGridSize;
         // 开始游戏，不重置状态
         this.startGame(false);
     }
 
-    // 计算下一关的网格布局和数字数量
-    calculateNextLevelGrid() {
-        const containerWidth = this.numContainer.clientWidth;
-        const containerHeight = this.numContainer.clientHeight;
-        const minButtonSize = 50; // 最小按钮大小（包括间距）
-        const aspectRatio = containerWidth / containerHeight;
-        
-        // 计算当前每个按钮的实际大小
-        const currentButtonWidth = containerWidth / this.currentGridCols;
-        const currentButtonHeight = containerHeight / this.currentGridRows;
-
-        // 尝试增加列数
-        const nextColButtonWidth = containerWidth / (this.currentGridCols + 1);
-        // 尝试增加行数
-        const nextRowButtonHeight = containerHeight / (this.currentGridRows + 1);
-
-        // 如果按钮会变得太小，考虑改变布局策略
-        if (nextColButtonWidth < minButtonSize && nextRowButtonHeight < minButtonSize) {
-            // 如果当前是方形布局，选择更合适的布局
-            if (this.currentGridRows === this.currentGridCols) {
-                // 根据容器的宽高比决定是增加行还是列
-                if (aspectRatio > 1) {
-                    this.currentGridCols++;
-                } else {
-                    this.currentGridRows++;
-                }
-            } else {
-                // 如果当前不是方形，尝试变成方形
-                const newSize = Math.max(this.currentGridRows, this.currentGridCols);
-                this.currentGridRows = newSize;
-                this.currentGridCols = newSize;
-            }
-        } else {
-            // 选择减少幅度较小的方向
-            if (nextColButtonWidth > nextRowButtonHeight) {
-                this.currentGridCols++;
-            } else {
-                this.currentGridRows++;
-            }
-        }
-
-        return this.currentGridRows * this.currentGridCols;
+    // 计算当前关卡的网格大小
+    calculateGridSize() {
+        // 从3x3开始，每关增加一行一列
+        return 2 + this.currentLevel;
     }
 
     // 获取评价
@@ -123,9 +82,11 @@ class NumberSortGame {
         let levelComment = '';
         if (level > 10) {
             if (time <= baseTime * 0.7) {
-                levelComment = `\n${level}关还能这么快，看来我确实小看你了！`;
+                levelComment = `\n第${level}关还能这么快，太厉害了！`;
+            } else if (time <= baseTime * 1.2) {
+                levelComment = `\n能在第${level}关保持这样的水平很不错！`;
             } else if (time > baseTime * 2.5) {
-                levelComment = `\n${level}关了还这么慢，你是来搞笑的吧？`;
+                levelComment = `\n第${level}关了，别着急，慢慢来～`;
             }
         }
 
@@ -148,7 +109,8 @@ class NumberSortGame {
         }
 
         // 构建完成时间文本
-        const timeText = `完成用时: ${time}秒${isNewRecord ? ' 🎉 新纪录!' : ''}`;
+        const gridSizeText = `${this.currentGridSize}×${this.currentGridSize}`;
+        const timeText = `第 ${this.currentLevel} 关 (${gridSizeText})\n完成用时: ${time}秒${isNewRecord ? ' 🎉 新纪录!' : ''}`;
         const bestTimeText = !isNewRecord && prevBestTime !== Infinity ? `\n本关最佳: ${prevBestTime}秒` : '';
         this.resultTime.textContent = timeText + bestTimeText;
 
@@ -167,18 +129,12 @@ class NumberSortGame {
 
     // 更新网格布局
     updateGridLayout() {
-        this.numContainer.style.gridTemplateColumns = `repeat(${this.currentGridCols}, 1fr)`;
-        this.numContainer.style.gridTemplateRows = `repeat(${this.currentGridRows}, 1fr)`;
-        
-        // 根据网格大小调整按钮样式
-        const totalCells = this.currentGridRows * this.currentGridCols;
-        if (totalCells > 20) {
-            this.numContainer.className = 'grid-large';
-        } else if (totalCells > 12) {
-            this.numContainer.className = 'grid-medium';
-        } else {
-            this.numContainer.className = 'grid-small';
-        }
+        // 移除所有现有的网格类
+        this.numContainer.className = '';
+        // 添加新的网格类
+        this.numContainer.classList.add(`grid-${this.currentGridSize}`);
+        // 设置CSS变量以控制网格大小
+        this.numContainer.style.setProperty('--grid-size', this.currentGridSize);
     }
 
     // 开始游戏
@@ -186,38 +142,69 @@ class NumberSortGame {
         if (isNewGame) {
             // 如果是新游戏，重置所有状态
             this.currentLevel = 1;
-            this.currentGridRows = 3;
-            this.currentGridCols = 3;
-            this.maxNumber = this.currentGridRows * this.currentGridCols;
+            this.currentGridSize = 3;
+            this.maxNumber = this.currentGridSize * this.currentGridSize;
             this.bestTimes = {};
         }
         
+        // 根据当前关卡计算网格大小
+        this.currentGridSize = this.calculateGridSize();
+        this.maxNumber = this.currentGridSize * this.currentGridSize;
+        
+        // 重置当前数字和生成新的数字数组
         this.currentNumber = 1;
         this.numbers = Array.from({length: this.maxNumber}, (_, i) => i + 1);
         this.shuffleArray(this.numbers);
-        this.updateGridLayout();
+        
+        // 渲染界面
         this.renderNumbers();
+        
+        // 设置开始时间
         this.startTime = Date.now();
         this.hideResultModal();
+
+        // 更新关卡信息显示
+        const levelInfo = document.querySelector('.level-info');
+        if (levelInfo) {
+            levelInfo.textContent = `第 ${this.currentLevel} 关 (${this.currentGridSize}×${this.currentGridSize})`;
+        }
+
+        // 添加调试信息
+        console.log(`Starting game level ${this.currentLevel} with grid size ${this.currentGridSize}`);
     }
 
     // 渲染数字
     renderNumbers() {
+        // 清空容器
         this.numContainer.innerHTML = '';
-        this.numbers.forEach(num => {
+        
+        // 创建并添加按钮
+        this.numbers.forEach((num, index) => {
             const button = document.createElement('button');
             button.className = 'num-btn';
-            button.textContent = num;
+            button.textContent = num; // 直接使用原始数字
             button.dataset.number = num;
+            button.dataset.index = index;
+            
+            // 添加点击事件监听器
             button.addEventListener('click', (e) => this.handleNumberClick(e), { passive: true });
+            
+            // 将按钮添加到容器
             this.numContainer.appendChild(button);
         });
+
+        // 更新网格布局
+        this.updateGridLayout();
+        
+        // 添加调试信息
+        console.log(`Rendering grid ${this.currentGridSize}x${this.currentGridSize} with ${this.maxNumber} numbers`);
+        console.log('Numbers array:', this.numbers);
     }
 
     // 处理数字点击
     handleNumberClick(event) {
         const button = event.currentTarget;
-        const num = parseInt(button.dataset.number);
+        const num = parseInt(button.dataset.number); // 使用原始数字值
         
         // 如果按钮已经被标记为正确，直接返回
         if (button.classList.contains('correct')) {
@@ -262,9 +249,21 @@ class NumberSortGame {
     // 下一关
     nextLevel() {
         this.currentLevel++;
-        this.maxNumber = this.calculateNextLevelGrid();
+        // 更新网格大小
+        this.currentGridSize = this.calculateGridSize();
+        this.maxNumber = this.currentGridSize * this.currentGridSize;
         this.startGame();
-        this.saveGameState(); // 保存新关卡状态
+        this.saveGameState();
+    }
+
+    // 显示完成所有关卡的消息
+    showCompletionMessage() {
+        this.resultTime.textContent = "恭喜完成所有关卡！";
+        this.resultComment.textContent = "你已经是数字排序大师了！";
+        this.resultModal.classList.add('active');
+        this.modalOverlay.classList.add('active');
+        // 隐藏"下一关"按钮
+        document.getElementById('next-focus').style.display = 'none';
     }
 }
 

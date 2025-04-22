@@ -33,7 +33,7 @@ const functionData = [
         description: "数字顺序训练",
         gradient: ["#FF9F43", "#F97316"],
         isActive: true,
-        route: "/sort.html"
+        route: "pages/FocusPage.html"
     },
     {
         id: "visualTracking",

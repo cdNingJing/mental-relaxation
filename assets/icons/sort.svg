@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4 6H11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M4 12H11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M4 18H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M15 15L18 18L21 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M18 6V18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- 背景网格 -->
+    <rect x="2" y="2" width="20" height="20" rx="2" fill="currentColor" fill-opacity="0.1"/>
+    
+    <!-- 数字 -->
+    <text x="5" y="7.5" font-size="4" fill="currentColor" font-family="Arial" font-weight="bold">1</text>
+    <text x="11" y="7.5" font-size="4" fill="currentColor" font-family="Arial" font-weight="bold">2</text>
+    <text x="17" y="7.5" font-size="4" fill="currentColor" font-family="Arial" font-weight="bold">3</text>
+    
+    <text x="5" y="13.5" font-size="4" fill="currentColor" font-family="Arial" font-weight="bold">4</text>
+    <text x="11" y="13.5" font-size="4" fill="currentColor" font-family="Arial" font-weight="bold">5</text>
+    <text x="17" y="13.5" font-size="4" fill="currentColor" font-family="Arial" font-weight="bold">6</text>
+    
+    <text x="5" y="19.5" font-size="4" fill="currentColor" font-family="Arial" font-weight="bold">7</text>
+    <text x="11" y="19.5" font-size="4" fill="currentColor" font-family="Arial" font-weight="bold">8</text>
+    <text x="17" y="19.5" font-size="4" fill="currentColor" font-family="Arial" font-weight="bold">9</text>
+    
+    <!-- 网格线 -->
+    <path d="M9 4V20" stroke="currentColor" stroke-opacity="0.3" stroke-width="0.5"/>
+    <path d="M15 4V20" stroke="currentColor" stroke-opacity="0.3" stroke-width="0.5"/>
+    <path d="M4 9H20" stroke="currentColor" stroke-opacity="0.3" stroke-width="0.5"/>
+    <path d="M4 15H20" stroke="currentColor" stroke-opacity="0.3" stroke-width="0.5"/>
 </svg> 

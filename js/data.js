@@ -1,5 +1,14 @@
 const functionData = [
     {
+        id: "numberSort",
+        icon: "assets/icons/sort.svg",
+        title: "数字排序",
+        description: "提高专注力",
+        gradient: ["#FF9F43", "#F97316"],
+        isActive: true,
+        route: "pages/FocusPage.html"
+    },
+    {
         id: "breathingGuide",
         icon: "assets/icons/breathing.svg",
         title: "呼吸引导",
@@ -25,15 +34,6 @@ const functionData = [
         gradient: ["#FF6B6B", "#EE5253"],
         isActive: true,
         route: "pages/cognitivePage.html"
-    },
-    {
-        id: "numberSort",
-        icon: "assets/icons/sort.svg",
-        title: "数字排序",
-        description: "数字顺序训练",
-        gradient: ["#FF9F43", "#F97316"],
-        isActive: true,
-        route: "pages/FocusPage.html"
     },
     {
         id: "visualTracking",

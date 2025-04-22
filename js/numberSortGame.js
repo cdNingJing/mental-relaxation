@@ -8,6 +8,8 @@ class NumberSortGame {
         this.isProcessingClick = false;
         this.bestTimes = {};
         this.currentGridSize = 3;
+        this.gridWidth = 3;  // 新增：网格宽度
+        this.gridHeight = 3; // 新增：网格高度
         
         // 从本地存储加载游戏状态
         this.loadGameState();
@@ -25,7 +27,8 @@ class NumberSortGame {
         const gameState = {
             currentLevel: this.currentLevel,
             bestTimes: this.bestTimes,
-            currentGridSize: this.currentGridSize
+            gridWidth: this.gridWidth,
+            gridHeight: this.gridHeight
         };
         localStorage.setItem('numberSortGameState', JSON.stringify(gameState));
     }
@@ -37,8 +40,9 @@ class NumberSortGame {
             const gameState = JSON.parse(savedState);
             this.currentLevel = gameState.currentLevel;
             this.bestTimes = gameState.bestTimes;
-            this.currentGridSize = gameState.currentGridSize;
-            this.maxNumber = this.currentGridSize * this.currentGridSize;
+            this.gridWidth = gameState.gridWidth || this.gridWidth;
+            this.gridHeight = gameState.gridHeight || this.gridHeight;
+            this.maxNumber = this.gridWidth * this.gridHeight;
         }
     }
 
@@ -47,15 +51,24 @@ class NumberSortGame {
         // 从本地存储加载游戏状态
         this.loadGameState();
         // 设置当前关卡的数字数量
-        this.maxNumber = this.currentGridSize * this.currentGridSize;
+        this.maxNumber = this.gridWidth * this.gridHeight;
         // 开始游戏，不重置状态
         this.startGame(false);
     }
 
     // 计算当前关卡的网格大小
     calculateGridSize() {
-        // 从3x3开始，每关增加一行一列
-        return 2 + this.currentLevel;
+        const level = this.currentLevel;
+        if (level <= 8) {
+            // 8关之前保持正方形布局
+            this.gridWidth = 2 + level;
+            this.gridHeight = 2 + level;
+        } else {
+            // 8关之后，宽度固定为10，每关高度增加2
+            this.gridWidth = 10;
+            this.gridHeight = 10 + (level - 8) * 2;
+        }
+        return this.gridWidth; // 为了兼容现有代码，返回宽度
     }
 
     // 获取评价
@@ -109,7 +122,7 @@ class NumberSortGame {
         }
 
         // 构建完成时间文本
-        const gridSizeText = `${this.currentGridSize}×${this.currentGridSize}`;
+        const gridSizeText = `${this.gridWidth}×${this.gridHeight}`;
         const timeText = `第 ${this.currentLevel} 关 (${gridSizeText})\n完成用时: ${time}秒${isNewRecord ? ' 🎉 新纪录!' : ''}`;
         const bestTimeText = !isNewRecord && prevBestTime !== Infinity ? `\n本关最佳: ${prevBestTime}秒` : '';
         this.resultTime.textContent = timeText + bestTimeText;
@@ -132,9 +145,10 @@ class NumberSortGame {
         // 移除所有现有的网格类
         this.numContainer.className = '';
         // 添加新的网格类
-        this.numContainer.classList.add(`grid-${this.currentGridSize}`);
+        this.numContainer.classList.add(`grid-${this.gridWidth}`);
         // 设置CSS变量以控制网格大小
-        this.numContainer.style.setProperty('--grid-size', this.currentGridSize);
+        this.numContainer.style.setProperty('--grid-width', this.gridWidth);
+        this.numContainer.style.setProperty('--grid-height', this.gridHeight);
     }
 
     // 开始游戏
@@ -142,14 +156,15 @@ class NumberSortGame {
         if (isNewGame) {
             // 如果是新游戏，重置所有状态
             this.currentLevel = 1;
-            this.currentGridSize = 3;
-            this.maxNumber = this.currentGridSize * this.currentGridSize;
+            this.gridWidth = 3;
+            this.gridHeight = 3;
+            this.maxNumber = this.gridWidth * this.gridHeight;
             this.bestTimes = {};
         }
         
         // 根据当前关卡计算网格大小
-        this.currentGridSize = this.calculateGridSize();
-        this.maxNumber = this.currentGridSize * this.currentGridSize;
+        this.calculateGridSize();
+        this.maxNumber = this.gridWidth * this.gridHeight;
         
         // 重置当前数字和生成新的数字数组
         this.currentNumber = 1;
@@ -166,11 +181,11 @@ class NumberSortGame {
         // 更新关卡信息显示
         const levelInfo = document.querySelector('.level-info');
         if (levelInfo) {
-            levelInfo.textContent = `第 ${this.currentLevel} 关 (${this.currentGridSize}×${this.currentGridSize})`;
+            levelInfo.textContent = `第 ${this.currentLevel} 关 (${this.gridWidth}×${this.gridHeight})`;
         }
 
         // 添加调试信息
-        console.log(`Starting game level ${this.currentLevel} with grid size ${this.currentGridSize}`);
+        console.log(`Starting game level ${this.currentLevel} with grid size ${this.gridWidth}x${this.gridHeight}`);
     }
 
     // 渲染数字
@@ -197,7 +212,7 @@ class NumberSortGame {
         this.updateGridLayout();
         
         // 添加调试信息
-        console.log(`Rendering grid ${this.currentGridSize}x${this.currentGridSize} with ${this.maxNumber} numbers`);
+        console.log(`Rendering grid ${this.gridWidth}x${this.gridHeight} with ${this.maxNumber} numbers`);
         console.log('Numbers array:', this.numbers);
     }
 
@@ -250,8 +265,8 @@ class NumberSortGame {
     nextLevel() {
         this.currentLevel++;
         // 更新网格大小
-        this.currentGridSize = this.calculateGridSize();
-        this.maxNumber = this.currentGridSize * this.currentGridSize;
+        this.calculateGridSize();
+        this.maxNumber = this.gridWidth * this.gridHeight;
         this.startGame();
         this.saveGameState();
     }

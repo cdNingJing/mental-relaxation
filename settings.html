@@ -420,5 +420,19 @@
             脑力训练游戏平台 v1.0.0
         </div>
     </div>
+
+    <script>
+        // 获取退出登录按钮
+        const logoutButton = document.querySelector('.logout-button');
+        
+        // 添加点击事件监听器
+        logoutButton.addEventListener('click', () => {
+            // 显示确认对话框
+            if (confirm('确定要退出登录吗？')) {
+                // 用户点击确认，跳转到登录页面
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
 </body>
 </html> 

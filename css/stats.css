@@ -1,0 +1,324 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    color: #333;
+    overflow: hidden;
+}
+
+/* 主内容区域 */
+.content {
+    overflow-y: auto;
+    height: calc(100vh - 65px);
+    padding: 20px;
+}
+
+/* 统计卡片 */
+.stats-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.stats-title {
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.time-selector {
+    font-size: 14px;
+    color: #007AFF;
+}
+
+/* 时间周期选择器 */
+.time-tabs {
+    display: flex;
+    border-radius: 8px;
+    background-color: #f1f3f5;
+    padding: 4px;
+    margin-bottom: 16px;
+}
+
+.time-tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.time-tab.active {
+    background-color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    font-weight: 500;
+}
+
+/* 大型数据卡片 */
+.big-stat-card {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border-radius: 16px;
+    padding: 20px;
+    color: white;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.big-stat-card::before {
+    content: "";
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.big-stat-value {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.big-stat-label {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.stat-change {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 8px;
+    border-radius: 100px;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.stat-increase {
+    color: #4ade80;
+}
+
+.stat-decrease {
+    color: #f87171;
+}
+
+/* 能力分布图 */
+.radar-container {
+    width: 100%;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.radar-container canvas {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* 能力评级块 */
+.skill-rating {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    position: relative;
+    padding-right: 40px;
+}
+
+.skill-name {
+    width: 70px;
+    font-size: 14px;
+    margin-right: 12px;
+}
+
+.skill-level {
+    flex: 1;
+    background: linear-gradient(to right, #94a3b8, #6366f1);
+    height: 8px;
+    border-radius: 4px;
+    position: relative;
+}
+
+.skill-value {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 600;
+    min-width: 30px;
+    text-align: right;
+    color: #6366f1;
+}
+
+/* 游戏活动卡片 */
+.activity-card {
+    display: flex;
+    padding: 16px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 12px;
+}
+
+.activity-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    font-size: 24px;
+    color: white;
+}
+
+.activity-info {
+    flex: 1;
+}
+
+.activity-date {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 4px;
+}
+
+.activity-name {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.activity-detail {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.activity-score {
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 添加模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #666;
+    cursor: pointer;
+}
+
+.detail-stats {
+    margin-bottom: 20px;
+}
+
+.detail-stat-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.detail-stat-label {
+    color: #666;
+}
+
+.detail-stat-value {
+    font-weight: 500;
+}
+
+.detail-chart {
+    height: 200px;
+    margin-bottom: 65px;
+}
+
+/* Chart.js legend 优化样式 */
+.chartjs-legend,
+#radarChart + .chartjs-legend {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    margin-top: 12px;
+}
+.chartjs-legend li {
+    display: flex !important;
+    align-items: center;
+    margin: 0 12px !important;
+    font-size: 18px !important;
+    color: #64748b !important;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.chartjs-legend li:hover {
+    color: #6366f1 !important;
+}
+.chartjs-legend li span {
+    display: inline-block;
+    width: 22px !important;
+    height: 22px !important;
+    border-radius: 50%;
+    margin-right: 10px;
+    box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+    border: 2px solid #e0e7ef;
+    transition: box-shadow 0.2s, border 0.2s;
+}
+.chartjs-legend li:hover span {
+    box-shadow: 0 4px 16px rgba(99,102,241,0.18);
+    border: 2px solid #6366f1;
+} 

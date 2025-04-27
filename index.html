@@ -2,45 +2,168 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ThinkShift - 思维转换</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/tab-bar.css">
 </head>
 <body>
-    <div class="app-container">
-        <!-- 顶部导航栏 -->
-        <header class="app-header">
-            <div class="header-left">
-                <div class="logo-title">
-                    <img src="assets/logo.png" alt="ThinkShift Logo" class="app-logo">
-                    <h1>
-                        <span class="title-en">ThinkShift</span>
-                        <span class="title-cn">思维转换</span>
-                    </h1>
-                </div>
+    <!-- 页面内容区域 -->
+    <div class="content">
+        <!-- 欢迎语 -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold">你好</h1>
+                <p class="text-gray-500">今天准备好放松心情了吗？</p>
             </div>
-            <div class="header-right">
-                <button class="settings-btn">
-                    <img src="assets/icons/settings.svg" alt="设置">
-                </button>
-            </div>
-        </header>
-
-        <!-- 搜索栏 -->
-        <div class="search-bar">
-            <img src="assets/icons/search.svg" alt="搜索" class="search-icon">
-            <input type="text" id="searchInput" placeholder="搜索放松方式">
+            <div class="w-10 h-10 rounded-full bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80')"></div>
         </div>
 
-        <!-- 主要功能区 -->
-        <main class="app-main">
-            <div class="function-grid" id="functionGrid">
-                <!-- 功能列表将由 JavaScript 动态生成 -->
+        <!-- 精选放松方式轮播 -->
+        <div class="featured-carousel">
+            <div class="featured-slide" style="background-image: url('https://images.unsplash.com/photo-1506126613408-eca07ce68773?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80')">
+                <div class="featured-info">
+                    <div class="text-sm text-blue-300 mb-1">冥想放松</div>
+                    <h2 class="text-xl font-bold mb-2">正念冥想</h2>
+                    <p class="text-sm text-gray-300">让心灵平静下来</p>
+                </div>
             </div>
-        </main>
+        </div>
+
+        <!-- 每日放松计划 -->
+        <div class="challenge-card">
+            <div class="flex justify-between items-start mb-2">
+                <div>
+                    <h3 class="text-lg font-bold">今日放松计划</h3>
+                    <p class="text-sm opacity-80">完成今天的放松目标</p>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full w-10 h-10 flex items-center justify-center">
+                    <i class="fas fa-spa text-white"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="flex justify-between text-sm">
+                    <span>完成度: 0/3</span>
+                    <span>0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 放松类别 -->
+        <h3 class="text-lg font-bold mb-4">放松类别</h3>
+        <div id="functionGrid" class="flex overflow-x-auto pb-4 -mx-3 px-3 mb-6">
+            <div class="category-item">
+                <div class="category-icon" style="background: linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)">
+                    <i class="fas fa-spa"></i>
+                </div>
+                <span class="text-xs">冥想</span>
+            </div>
+            <div class="category-item">
+                <div class="category-icon" style="background: linear-gradient(135deg, #56CCF2 0%, #2F80ED 100%)">
+                    <i class="fas fa-music"></i>
+                </div>
+                <span class="text-xs">音乐</span>
+            </div>
+            <div class="category-item">
+                <div class="category-icon" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)">
+                    <i class="fas fa-book"></i>
+                </div>
+                <span class="text-xs">阅读</span>
+            </div>
+            <div class="category-item">
+                <div class="category-icon" style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)">
+                    <i class="fas fa-walking"></i>
+                </div>
+                <span class="text-xs">运动</span>
+            </div>
+            <div class="category-item">
+                <div class="category-icon" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%)">
+                    <i class="fas fa-coffee"></i>
+                </div>
+                <span class="text-xs">休息</span>
+            </div>
+        </div>
+
+        <!-- 推荐放松方式 -->
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold">为你推荐</h3>
+            <a href="relaxation.html" class="text-blue-500 text-sm">查看全部</a>
+        </div>
+        
+        <div class="game-small-card">
+            <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" class="game-small-image">
+            <div class="game-small-info">
+                <div>
+                    <h4 class="font-medium">正念冥想</h4>
+                    <p class="text-xs text-gray-500 mt-1">10分钟引导冥想</p>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="badge">冥想</span>
+                    <div class="flex text-yellow-500 text-xs">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-small-card">
+            <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" class="game-small-image">
+            <div class="game-small-info">
+                <div>
+                    <h4 class="font-medium">轻音乐放松</h4>
+                    <p class="text-xs text-gray-500 mt-1">舒缓心情的音乐</p>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="badge">音乐</span>
+                    <div class="flex text-yellow-500 text-xs">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- iOS底部标签栏 -->
+    <div class="tab-bar">
+        <a href="index.html" class="tab-item active">
+            <div class="tab-icon"><i class="fas fa-home"></i></div>
+            <div>首页</div>
+        </a>
+        <a href="games.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-gamepad"></i></div>
+            <div>游戏</div>
+        </a>
+        <a href="stats.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-chart-bar"></i></div>
+            <div>统计</div>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-user"></i></div>
+            <div>我的</div>
+        </a>
+        <a href="settings.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-cog"></i></div>
+            <div>设置</div>
+        </a>
     </div>
 
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/carousel.js"></script>
+    <script src="js/daily-plan.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </body>
 </html> 

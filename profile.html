@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>脑力训练游戏平台 - 个人资料</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/tab-bar.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #333;
+            overflow: hidden;
+        }
+
+        /* 主内容区域 */
+        .content {
+            overflow-y: auto;
+            height: calc(100vh - 44px - 83px);
+            padding: 0;
+        }
+
+
+        /* 个人资料头部 */
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 20px 100px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-header::after {
+            content: "";
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .settings-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 10;
+        }
+
+        .user-info {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid white;
+            overflow: hidden;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .username {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .bio {
+            font-size: 14px;
+            opacity: 0.9;
+            text-align: center;
+            max-width: 250px;
+        }
+
+        /* 个人资料内容 */
+        .profile-content {
+            background-color: #f8f9fa;
+            border-radius: 24px;
+            margin-top: -70px;
+            padding: 20px;
+            position: relative;
+            z-index: 20;
+        }
+
+        /* 用户等级 */
+        .level-card {
+            background-color: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .level-label {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 100px;
+        }
+
+        .level-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .level-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .level-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            width: 75%;
+            border-radius: 4px;
+        }
+
+        /* 徽章列表 */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .see-all {
+            font-size: 14px;
+            color: #007AFF;
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .badge-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .badge-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            font-size: 24px;
+            color: white;
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+        }
+
+        .badge-icon.locked {
+            background: #e9ecef;
+            color: #94a3b8;
+        }
+
+        .badge-name {
+            font-size: 10px;
+            text-align: center;
+        }
+
+        /* 成就列表 */
+        .achievement-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .achievement-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .achievement-info {
+            flex: 1;
+        }
+
+        .achievement-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .achievement-desc {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .achievement-date {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        /* 底部菜单项 */
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 18px;
+            color: white;
+        }
+
+        .menu-text {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .menu-arrow {
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 页面内容区域 -->
+    <div class="content">
+        <!-- 个人资料头部 -->
+        <div class="profile-header">
+            <a href="settings.html" class="settings-button">
+                <i class="fas fa-cog text-white"></i>
+            </a>
+            <div class="user-info">
+                <div class="avatar">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="用户头像">
+                </div>
+                <div class="username">小明</div>
+                <div class="bio">脑力训练爱好者，每天坚持锻炼大脑</div>
+            </div>
+        </div>
+
+        <!-- 个人资料内容 -->
+        <div class="profile-content">
+            <!-- 用户等级卡片 -->
+            <div class="level-card">
+                <div class="level-label">大脑等级</div>
+                <div class="level-info">
+                    <div class="level-title">思维大师</div>
+                    <div class="level-number">Lv.16</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="progress-text">
+                    <span>15,750 / 21,000 XP</span>
+                    <span>下一级：Lv.17</span>
+                </div>
+            </div>
+
+            <!-- 徽章列表 -->
+            <div class="section-header">
+                <div class="section-title">我的徽章</div>
+                <a href="#" class="see-all">查看全部</a>
+            </div>
+
+            <div class="badges-grid">
+                <div class="badge-item">
+                    <div class="badge-icon" style="background: linear-gradient(135deg, #56CCF2 0%, #2F80ED 100%)">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <div class="badge-name">记忆大师</div>
+                </div>
+                <div class="badge-item">
+                    <div class="badge-icon" style="background: linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <div class="badge-name">七日连续</div>
+                </div>
+                <div class="badge-item">
+                    <div class="badge-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="badge-name">算术天才</div>
+                </div>
+                <div class="badge-item">
+                    <div class="badge-icon locked">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="badge-name">逻辑大师</div>
+                </div>
+                <div class="badge-item">
+                    <div class="badge-icon" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="badge-name">专注达人</div>
+                </div>
+                <div class="badge-item">
+                    <div class="badge-icon" style="background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%)">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="badge-name">反应之王</div>
+                </div>
+                <div class="badge-item">
+                    <div class="badge-icon locked">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="badge-name">语言大师</div>
+                </div>
+                <div class="badge-item">
+                    <div class="badge-icon locked">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="badge-name">完美主义</div>
+                </div>
+            </div>
+
+            <!-- 最近成就 -->
+            <div class="section-header">
+                <div class="section-title">最近成就</div>
+                <a href="#" class="see-all">查看全部</a>
+            </div>
+
+            <div class="achievement-card">
+                <div class="achievement-icon" style="background: linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="achievement-info">
+                    <div class="achievement-name">七日连续挑战</div>
+                    <div class="achievement-desc">连续七天完成每日挑战</div>
+                </div>
+                <div class="achievement-date">3天前</div>
+            </div>
+
+            <div class="achievement-card">
+                <div class="achievement-icon" style="background: linear-gradient(135deg, #56CCF2 0%, #2F80ED 100%)">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <div class="achievement-info">
+                    <div class="achievement-name">算术达人</div>
+                    <div class="achievement-desc">在快速算术中获得满分</div>
+                </div>
+                <div class="achievement-date">1周前</div>
+            </div>
+
+            <div class="achievement-card">
+                <div class="achievement-icon" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="achievement-info">
+                    <div class="achievement-name">记忆力提升</div>
+                    <div class="achievement-desc">记忆力评分超过80分</div>
+                </div>
+                <div class="achievement-date">2周前</div>
+            </div>
+
+            <!-- 账户菜单 -->
+            <div class="mt-8">
+                <a href="#" class="menu-item">
+                    <div class="menu-icon" style="background: linear-gradient(135deg, #56CCF2 0%, #2F80ED 100%)">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="menu-text">编辑个人资料</div>
+                    <div class="menu-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon" style="background: linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="menu-text">通知设置</div>
+                    <div class="menu-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="menu-icon" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="menu-text">我的收藏</div>
+                    <div class="menu-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- iOS底部标签栏 -->
+    <div class="tab-bar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-home"></i></div>
+            <div>首页</div>
+        </a>
+        <a href="games.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-gamepad"></i></div>
+            <div>游戏</div>
+        </a>
+        <a href="stats.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-chart-bar"></i></div>
+            <div>统计</div>
+        </a>
+        <a href="profile.html" class="tab-item active">
+            <div class="tab-icon"><i class="fas fa-user"></i></div>
+            <div>我的</div>
+        </a>
+        <a href="settings.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-cog"></i></div>
+            <div>设置</div>
+        </a>
+    </div>
+</body>
+</html> 

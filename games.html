@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>脑力训练游戏平台 - 游戏列表</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/games-list-page.css">
+    <link rel="stylesheet" href="css/tab-bar.css">
+</head>
+<body>
+    <!-- 页面内容区域 -->
+    <div class="content">
+        <h1 class="text-2xl font-bold mb-6">游戏库</h1>
+        
+        <!-- 搜索栏 -->
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="搜索游戏">
+        </div>
+        
+        <!-- 类别选择器 -->
+        <div class="categories-scroll">
+            <div class="category-chip active">全部</div>
+            <div class="category-chip">记忆力</div>
+            <div class="category-chip">算术</div>
+            <div class="category-chip">逻辑</div>
+            <div class="category-chip">反应力</div>
+            <div class="category-chip">语言</div>
+            <div class="category-chip">专注力</div>
+            <div class="category-chip">多任务</div>
+        </div>
+        
+        <!-- 已完成游戏 -->
+        <div id="finished-games-list" class="grid grid-cols-2 gap-4 mb-8"></div>
+
+        <!-- 开发中游戏 -->
+        <div id="developing-games-list" class="grid grid-cols-2 gap-4"></div>
+    </div>
+
+    <!-- iOS底部标签栏 -->
+    <div class="tab-bar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-home"></i></div>
+            <div>首页</div>
+        </a>
+        <a href="games.html" class="tab-item active">
+            <div class="tab-icon"><i class="fas fa-gamepad"></i></div>
+            <div>游戏</div>
+        </a>
+        <a href="stats.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-chart-bar"></i></div>
+            <div>统计</div>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-user"></i></div>
+            <div>我的</div>
+        </a>
+        <a href="settings.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-cog"></i></div>
+            <div>设置</div>
+        </a>
+    </div>
+
+    <script src="js/games-list.js"></script>
+</body>
+</html> 

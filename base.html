@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>脑力训练游戏平台</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #333;
+            overflow: hidden;
+        }
+
+        /* 主内容区域 */
+        .content {
+            overflow-y: auto;
+            height: calc(100vh - 44px - 83px);
+            padding: 20px;
+        }
+
+
+        /* 卡片UI */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        /* 按钮样式 */
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 14px 20px;
+            font-weight: 600;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #e0e0e0 0%, #c8c8c8 100%);
+            color: #333;
+            border-radius: 10px;
+            padding: 14px 20px;
+            font-weight: 600;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        /* 游戏卡片 */
+        .game-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            height: 200px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .game-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .game-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- 页面内容区域 -->
+    <div class="content">
+        <!-- 这里是每个页面的具体内容 -->
+    </div>
+
+    <!-- iOS底部标签栏 -->
+    <div class="tab-bar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-home"></i></div>
+            <div>首页</div>
+        </a>
+        <a href="games.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-gamepad"></i></div>
+            <div>游戏</div>
+        </a>
+        <a href="stats.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-chart-bar"></i></div>
+            <div>统计</div>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-user"></i></div>
+            <div>我的</div>
+        </a>
+        <a href="settings.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-cog"></i></div>
+            <div>设置</div>
+        </a>
+    </div>
+
+    <script>
+        // 根据当前页面URL激活对应的标签
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const filename = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+            
+            document.querySelectorAll('.tab-item').forEach(tab => {
+                const href = tab.getAttribute('href');
+                if (href === filename) {
+                    tab.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

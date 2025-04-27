@@ -1,0 +1,156 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    color: #333;
+    /* overflow: hidden; */
+}
+
+/* 主内容区域 */
+.content {
+    overflow-y: auto;
+    height: calc(100vh - 65px);
+    padding: 20px;
+}
+
+/* 搜索栏 */
+.search-bar {
+    background-color: rgba(142, 142, 147, 0.12);
+    border-radius: 10px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.search-bar i {
+    color: #8e8e93;
+    margin-right: 8px;
+}
+
+.search-bar input {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    width: 100%;
+    color: #333;
+    box-shadow: none;
+}
+.search-bar input:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    background: transparent;
+    color: #333;
+}
+
+/* 类别选择器 */
+.categories-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding-bottom: 12px;
+    margin-bottom: 24px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.categories-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.category-chip {
+    white-space: nowrap;
+    padding: 8px 16px;
+    background-color: white;
+    border-radius: 100px;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.category-chip.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+/* 游戏卡片 */
+.game-card {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background: white;
+    height: 180px;
+}
+
+.game-cover {
+    height: 120px;
+    overflow: hidden;
+}
+
+.game-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.game-info {
+    padding: 6px 16px;
+}
+
+.game-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.game-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #8e8e93;
+}
+
+.game-rating {
+    display: flex;
+    align-items: center;
+    color: #FFB800;
+}
+
+.game-type {
+    font-size: 10px;
+    color: #007AFF;
+    background-color: rgba(0, 122, 255, 0.1);
+    padding: 2px 8px;
+    border-radius: 100px;
+}
+
+.popular-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    z-index: 1;
+}
+
+.new-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    z-index: 1;
+} 

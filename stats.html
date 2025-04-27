@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>脑力训练游戏平台 - 统计数据</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/tab-bar.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #333;
+            overflow: hidden;
+        }
+
+
+        /* 主内容区域 */
+        .content {
+            overflow-y: auto;
+            height: calc(100vh - 44px - 83px);
+            padding: 20px;
+        }
+
+
+        /* 统计卡片 */
+        .stats-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .stats-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .time-selector {
+            font-size: 14px;
+            color: #007AFF;
+        }
+
+        /* 时间周期选择器 */
+        .time-tabs {
+            display: flex;
+            border-radius: 8px;
+            background-color: #f1f3f5;
+            padding: 4px;
+            margin-bottom: 16px;
+        }
+
+        .time-tab {
+            flex: 1;
+            text-align: center;
+            padding: 8px 0;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .time-tab.active {
+            background-color: white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+        }
+
+        /* 大型数据卡片 */
+        .big-stat-card {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 16px;
+            padding: 20px;
+            color: white;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .big-stat-card::before {
+            content: "";
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .big-stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .big-stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 100px;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .stat-increase {
+            color: #4ade80;
+        }
+
+        .stat-decrease {
+            color: #f87171;
+        }
+
+        /* 能力分布图 */
+        .radar-container {
+            width: 100%;
+            height: 250px;
+        }
+
+        /* 能力评级块 */
+        .skill-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .skill-name {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .skill-level {
+            background: linear-gradient(to right, #94a3b8, #6366f1);
+            height: 8px;
+            border-radius: 4px;
+        }
+
+        .skill-value {
+            margin-left: 12px;
+            font-weight: 600;
+            min-width: 30px;
+            text-align: right;
+        }
+
+        /* 游戏活动卡片 */
+        .activity-card {
+            display: flex;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 12px;
+        }
+
+        .activity-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-date {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+
+        .activity-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .activity-detail {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .activity-score {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 页面内容区域 -->
+    <div class="content">
+        <h1 class="text-2xl font-bold mb-6">训练统计</h1>
+        
+        <!-- 时间周期选择 -->
+        <div class="time-tabs">
+            <div class="time-tab">周</div>
+            <div class="time-tab active">月</div>
+            <div class="time-tab">年</div>
+            <div class="time-tab">全部</div>
+        </div>
+        
+        <!-- 主要统计卡片 -->
+        <div class="big-stat-card">
+            <div class="big-stat-value">138</div>
+            <div class="big-stat-label">本月训练总分数</div>
+            <div class="stat-change stat-increase">
+                <i class="fas fa-arrow-up mr-1"></i> 23% 相比上月
+            </div>
+        </div>
+        
+        <!-- 训练时长统计 -->
+        <div class="stats-card">
+            <div class="stats-header">
+                <div class="stats-title">训练时长</div>
+                <div class="time-selector">查看详情</div>
+            </div>
+            <canvas id="timeChart" height="180"></canvas>
+        </div>
+        
+        <!-- 能力评估 -->
+        <div class="stats-card">
+            <div class="stats-header">
+                <div class="stats-title">脑力能力分布</div>
+                <div class="time-selector">查看详情</div>
+            </div>
+            <div class="radar-container">
+                <canvas id="radarChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- 各项能力评级 -->
+        <div class="stats-card">
+            <div class="stats-header">
+                <div class="stats-title">能力评级</div>
+            </div>
+            
+            <div class="skill-rating">
+                <div class="skill-name">记忆力</div>
+                <div class="skill-level" style="width: 85%"></div>
+                <div class="skill-value">85</div>
+            </div>
+            
+            <div class="skill-rating">
+                <div class="skill-name">专注力</div>
+                <div class="skill-level" style="width: 75%"></div>
+                <div class="skill-value">75</div>
+            </div>
+            
+            <div class="skill-rating">
+                <div class="skill-name">逻辑思维</div>
+                <div class="skill-level" style="width: 90%"></div>
+                <div class="skill-value">90</div>
+            </div>
+            
+            <div class="skill-rating">
+                <div class="skill-name">反应速度</div>
+                <div class="skill-level" style="width: 65%"></div>
+                <div class="skill-value">65</div>
+            </div>
+            
+            <div class="skill-rating">
+                <div class="skill-name">计算能力</div>
+                <div class="skill-level" style="width: 80%"></div>
+                <div class="skill-value">80</div>
+            </div>
+        </div>
+        
+        <!-- 最近活动 -->
+        <h2 class="text-lg font-semibold mb-4 mt-6">最近活动</h2>
+        
+        <div class="activity-card">
+            <div class="activity-icon" style="background: linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)">
+                <i class="fas fa-brain"></i>
+            </div>
+            <div class="activity-info">
+                <div class="activity-date">今天 14:30</div>
+                <div class="activity-name">记忆翻牌</div>
+                <div class="activity-detail">完成难度：中级</div>
+            </div>
+            <div class="activity-score">92</div>
+        </div>
+        
+        <div class="activity-card">
+            <div class="activity-icon" style="background: linear-gradient(135deg, #56CCF2 0%, #2F80ED 100%)">
+                <i class="fas fa-calculator"></i>
+            </div>
+            <div class="activity-info">
+                <div class="activity-date">昨天 16:15</div>
+                <div class="activity-name">快速算术</div>
+                <div class="activity-detail">完成20题</div>
+            </div>
+            <div class="activity-score">85</div>
+        </div>
+        
+        <div class="activity-card">
+            <div class="activity-icon" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)">
+                <i class="fas fa-puzzle-piece"></i>
+            </div>
+            <div class="activity-info">
+                <div class="activity-date">2天前 09:45</div>
+                <div class="activity-name">数独挑战</div>
+                <div class="activity-detail">完成难度：专家</div>
+            </div>
+            <div class="activity-score">98</div>
+        </div>
+    </div>
+
+    <!-- iOS底部标签栏 -->
+    <div class="tab-bar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-home"></i></div>
+            <div>首页</div>
+        </a>
+        <a href="games.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-gamepad"></i></div>
+            <div>游戏</div>
+        </a>
+        <a href="stats.html" class="tab-item active">
+            <div class="tab-icon"><i class="fas fa-chart-bar"></i></div>
+            <div>统计</div>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-user"></i></div>
+            <div>我的</div>
+        </a>
+        <a href="settings.html" class="tab-item">
+            <div class="tab-icon"><i class="fas fa-cog"></i></div>
+            <div>设置</div>
+        </a>
+    </div>
+
+    <script>
+        // 训练时长图表
+        const timeCtx = document.getElementById('timeChart').getContext('2d');
+        const timeChart = new Chart(timeCtx, {
+            type: 'line',
+            data: {
+                labels: ['1', '5', '10', '15', '20', '25', '30'],
+                datasets: [{
+                    label: '训练时长 (分钟)',
+                    data: [15, 25, 20, 30, 35, 40, 45],
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderColor: '#6366f1',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#6366f1',
+                    pointRadius: 3
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: true,
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // 能力雷达图
+        const radarCtx = document.getElementById('radarChart').getContext('2d');
+        const radarChart = new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: ['记忆力', '专注力', '逻辑思维', '反应速度', '计算能力'],
+                datasets: [{
+                    label: '当前能力',
+                    data: [85, 75, 90, 65, 80],
+                    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                    borderColor: '#6366f1',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#6366f1'
+                }, {
+                    label: '上月能力',
+                    data: [75, 65, 80, 60, 70],
+                    backgroundColor: 'rgba(148, 163, 184, 0.2)',
+                    borderColor: '#94a3b8',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#94a3b8'
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        angleLines: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 10,
+                            padding: 10,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

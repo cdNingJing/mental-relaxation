@@ -2,61 +2,29 @@
 class FunctionGridView {
     constructor(containerId) {
         this.container = document.getElementById(containerId);
-        this.init();
+        if (this.container) {
+            this.init();
+        }
     }
 
     init() {
-        this.renderFunctions();
         this.bindEvents();
-    }
-
-    renderFunctions() {
-        const html = functionData.map(item => this.createFunctionItemHTML(item)).join("");
-        this.container.innerHTML = html;
-    }
-
-    createFunctionItemHTML(item) {
-        const inactiveClass = !item.isActive ? 'inactive' : '';
-        
-        return `
-            <div class="function-item ${inactiveClass}" id="${item.id}">
-                <div class="function-icon" style="background: linear-gradient(135deg, ${item.gradient[0]} 0%, ${item.gradient[1]} 100%)">
-                    <img src="${item.icon}" alt="${item.title}">
-                </div>
-                <h3>${item.title}</h3>
-                <p>${item.description}</p>
-            </div>
-        `;
     }
 
     bindEvents() {
         this.container.addEventListener("click", (e) => {
-            const functionItem = e.target.closest(".function-item");
-            if (!functionItem) return;
+            const categoryItem = e.target.closest(".category-item");
+            if (!categoryItem) return;
 
-            if (functionItem.classList.contains('inactive')) {
-                // 如果功能未激活，显示提示信息
-                this.showInactiveTip(functionItem);
-                return;
-            }
-
-            this.handleFunctionClick(functionItem.id);
+            const categoryName = categoryItem.querySelector("span").textContent;
+            this.handleCategoryClick(categoryName);
         });
     }
 
-    showInactiveTip(element) {
-        // 可以在这里添加更多的提示效果
-        element.style.animation = 'shake 0.5s ease-in-out';
-        setTimeout(() => {
-            element.style.animation = '';
-        }, 500);
-    }
-
-    handleFunctionClick(functionId) {
-        const functionItem = functionData.find(item => item.id === functionId);
-        if (functionItem && functionItem.isActive && functionItem.route) {
-            window.location.href = functionItem.route;
-        }
+    handleCategoryClick(categoryName) {
+        // 根据类别名称处理点击事件
+        console.log(`Category clicked: ${categoryName}`);
+        // 这里可以添加导航到对应页面的逻辑
     }
 }
 
@@ -76,13 +44,11 @@ class SearchHandler {
 
     handleSearch(event) {
         const searchTerm = event.target.value.toLowerCase().trim();
-        const functionItems = this.functionGrid.querySelectorAll(".function-item");
+        const categoryItems = this.functionGrid.querySelectorAll(".category-item");
 
-        functionItems.forEach(item => {
-            const title = item.querySelector("h3").textContent.toLowerCase();
-            const description = item.querySelector("p").textContent.toLowerCase();
-            const isMatch = title.includes(searchTerm) || description.includes(searchTerm);
-            
+        categoryItems.forEach(item => {
+            const categoryName = item.querySelector("span").textContent.toLowerCase();
+            const isMatch = categoryName.includes(searchTerm);
             item.classList.toggle("hidden", !isMatch);
         });
     }

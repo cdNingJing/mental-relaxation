@@ -10,6 +10,19 @@ const finishedGames = [
     type: '提高专注力',
     category: '专注力',
     link: 'pages/FocusPage.html',
+    description: '数字排序是一款训练专注力和反应速度的游戏。玩家需要在规定时间内，将随机出现的数字按照正确的顺序排列。游戏难度会随着玩家的进步而逐渐提高，帮助玩家提升专注力和反应能力。',
+    screenshots: [
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=300&q=80',
+      'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=300&q=80',
+      'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=300&q=80'
+    ],
+    stats: {
+      downloads: '100万+',
+      activeUsers: '10万+',
+      reviews: '2,345',
+      size: '45MB'
+    },
+    skills: ['专注力', '反应速度', '数字认知', '记忆力']
   },
   {
     title: '呼吸引导',
@@ -21,6 +34,19 @@ const finishedGames = [
     type: '冥想放松训练',
     category: '专注力',
     link: 'pages/RelaxPage.html',
+    description: '呼吸引导是一款帮助用户放松身心的冥想应用。通过专业的呼吸引导和舒缓的背景音乐，帮助用户缓解压力，改善睡眠质量，提升专注力。适合在工作和学习之余使用。',
+    screenshots: [
+      'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=300&q=80',
+      'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=300&q=80',
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=300&q=80'
+    ],
+    stats: {
+      downloads: '50万+',
+      activeUsers: '5万+',
+      reviews: '1,234',
+      size: '30MB'
+    },
+    skills: ['放松', '冥想', '专注力', '压力管理']
   },
   {
     title: '补全填空',
@@ -32,6 +58,19 @@ const finishedGames = [
     type: '文章补全训练',
     category: '语言',
     link: 'pages/essayReadingPage.html',
+    description: '补全填空是一款训练语言理解能力的游戏。玩家需要阅读文章，并根据上下文补全缺失的词语。游戏包含多个难度级别，适合不同水平的用户。通过游戏可以提升阅读理解能力和词汇量。',
+    screenshots: [
+      'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=300&q=80',
+      'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=300&q=80',
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=300&q=80'
+    ],
+    stats: {
+      downloads: '80万+',
+      activeUsers: '8万+',
+      reviews: '1,890',
+      size: '35MB'
+    },
+    skills: ['阅读理解', '词汇量', '语言表达', '逻辑思维']
   },
   {
     title: '直觉判断',
@@ -43,7 +82,20 @@ const finishedGames = [
     type: '快速认知训练',
     category: '逻辑',
     link: 'pages/cognitivePage.html',
-  },
+    description: '直觉判断是一款训练快速认知能力的游戏。玩家需要在短时间内对出现的图案、数字或文字做出判断。游戏通过科学的训练方法，帮助提升直觉判断能力和反应速度。',
+    screenshots: [
+      'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=300&q=80',
+      'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=300&q=80',
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=300&q=80'
+    ],
+    stats: {
+      downloads: '60万+',
+      activeUsers: '6万+',
+      reviews: '1,567',
+      size: '40MB'
+    },
+    skills: ['直觉判断', '反应速度', '认知能力', '注意力']
+  }
 ];
 
 // 开发中游戏数据
@@ -133,7 +185,20 @@ function renderFinishedGames() {
   const container = document.getElementById('finished-games-list');
   const filtered = filterGames(finishedGames);
   container.innerHTML = filtered.map(game => {
-    const cardOpen = game.link ? `onclick=\"window.location.href='${game.link}'\" style=\"cursor:pointer\"` : '';
+    const gameData = encodeURIComponent(JSON.stringify({
+      title: game.title,
+      badge: game.badge,
+      img: game.img,
+      rating: game.rating,
+      type: game.type,
+      category: game.category,
+      description: game.description,
+      screenshots: game.screenshots,
+      stats: game.stats,
+      skills: game.skills,
+      link: game.link
+    }));
+    const cardOpen = game.link ? `onclick=\"window.location.href='game_detail.html?game=${gameData}'\" style=\"cursor:pointer\"` : '';
     return `
       <div class=\"game-card\" ${cardOpen}>
         ${game.badge ? `<div class=\"${game.badgeClass}\">${game.badge}</div>` : ''}

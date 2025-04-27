@@ -26,7 +26,6 @@
             padding: 0;
         }
 
-
         /* 游戏封面图 */
         .game-hero {
             height: 250px;
@@ -279,11 +278,10 @@
     </style>
 </head>
 <body>
-
     <!-- 页面内容区域 -->
     <div class="content">
         <!-- 游戏封面图 -->
-        <div class="game-hero" style="background-image: url('https://images.unsplash.com/photo-1611996575749-79a3a250f948?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');">
+        <div class="game-hero">
             <a href="games.html" class="back-button">
                 <i class="fas fa-chevron-left"></i>
             </a>
@@ -295,119 +293,34 @@
         <!-- 游戏详情内容 -->
         <div class="game-detail-container">
             <!-- 游戏基本信息 -->
-            <div class="game-title">数独挑战</div>
+            <div class="game-title"></div>
             <div class="game-meta">
-                <div class="game-category">逻辑</div>
+                <div class="game-category"></div>
                 <div class="game-rating">
                     <i class="fas fa-star"></i>
-                    <span>4.8</span>
-                    <span class="text-gray-500">(2,345)</span>
+                    <span></span>
                 </div>
             </div>
 
             <!-- 游戏统计信息 -->
-            <div class="game-stats">
-                <div class="stat-item">
-                    <div class="stat-value">100万+</div>
-                    <div class="stat-label">下载量</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">10万+</div>
-                    <div class="stat-label">活跃用户</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">2,345</div>
-                    <div class="stat-label">评价</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">45MB</div>
-                    <div class="stat-label">大小</div>
-                </div>
-            </div>
+            <div class="game-stats"></div>
 
             <!-- 游戏描述 -->
             <div class="description">
                 <h3 class="section-title">关于游戏</h3>
-                <p>
-                    数独挑战是一款经典的逻辑推理游戏，具有多种难度级别。从初学者到专家，都能找到适合自己的挑战。
-                </p>
-                <p>
-                    每一局游戏都会提供一个部分填充的9x9网格，你需要填入数字1-9，确保每行、每列和每个3x3的小网格中都包含1-9的数字，不重复。
-                </p>
+                <p></p>
             </div>
 
             <!-- 游戏截图 -->
             <div class="screenshots">
                 <h3 class="section-title">游戏截图</h3>
-                <div class="screenshots-scroll">
-                    <div class="screenshot">
-                        <img src="https://images.unsplash.com/photo-1611996575749-79a3a250f948?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="游戏截图1">
-                    </div>
-                    <div class="screenshot">
-                        <img src="https://images.unsplash.com/photo-1606167668584-78701c57f13d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="游戏截图2">
-                    </div>
-                    <div class="screenshot">
-                        <img src="https://images.unsplash.com/photo-1614332287897-cdc485fa562d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="游戏截图3">
-                    </div>
-                </div>
+                <div class="screenshots-scroll"></div>
             </div>
 
             <!-- 技能提升 -->
             <div class="skills">
                 <h3 class="section-title">提升技能</h3>
-                <div class="skill-list">
-                    <div class="skill-tag">逻辑思维</div>
-                    <div class="skill-tag">推理能力</div>
-                    <div class="skill-tag">专注力</div>
-                    <div class="skill-tag">解决问题</div>
-                </div>
-            </div>
-
-            <!-- 用户评论 -->
-            <div class="reviews">
-                <h3 class="section-title">用户评论</h3>
-                
-                <div class="review-card">
-                    <div class="review-header">
-                        <div class="reviewer">
-                            <div class="reviewer-avatar">
-                                <img src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" alt="用户头像">
-                            </div>
-                            <div class="reviewer-name">张小明</div>
-                        </div>
-                        <div class="review-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                    </div>
-                    <div class="review-text">
-                        非常棒的游戏！难度设置合理，界面设计精美，每天都会玩几局来锻炼大脑。已经坚持了两个月，感觉逻辑思维能力有明显提升。
-                    </div>
-                </div>
-                
-                <div class="review-card">
-                    <div class="review-header">
-                        <div class="reviewer">
-                            <div class="reviewer-avatar">
-                                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" alt="用户头像">
-                            </div>
-                            <div class="reviewer-name">李小花</div>
-                        </div>
-                        <div class="review-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="far fa-star"></i>
-                        </div>
-                    </div>
-                    <div class="review-text">
-                        很好的数独游戏，但有时候高级难度的题目不太合理，希望开发者能优化一下算法。总体来说还是值得推荐的。
-                    </div>
-                </div>
+                <div class="skill-list"></div>
             </div>
 
             <!-- 开始游戏按钮 -->
@@ -436,5 +349,80 @@
             <div>我的</div>
         </a>
     </div>
+
+    <script>
+        // 获取URL参数中的游戏数据
+        const urlParams = new URLSearchParams(window.location.search);
+        const gameData = JSON.parse(decodeURIComponent(urlParams.get('game') || '{}'));
+
+        // 更新页面内容
+        if (gameData.title) {
+            // 更新标题
+            document.title = `${gameData.title} - 游戏详情`;
+            
+            // 更新游戏封面
+            const gameHero = document.querySelector('.game-hero');
+            gameHero.style.backgroundImage = `url('${gameData.img}')`;
+            
+            // 更新游戏标题
+            document.querySelector('.game-title').textContent = gameData.title;
+            
+            // 更新游戏类别
+            document.querySelector('.game-category').textContent = gameData.category;
+            
+            // 更新游戏评分
+            document.querySelector('.game-rating span').textContent = gameData.rating;
+            
+            // 更新游戏统计信息
+            if (gameData.stats) {
+                const statsContainer = document.querySelector('.game-stats');
+                statsContainer.innerHTML = `
+                    <div class="stat-item">
+                        <div class="stat-value">${gameData.stats.downloads}</div>
+                        <div class="stat-label">下载量</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${gameData.stats.activeUsers}</div>
+                        <div class="stat-label">活跃用户</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${gameData.stats.reviews}</div>
+                        <div class="stat-label">评价</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${gameData.stats.size}</div>
+                        <div class="stat-label">大小</div>
+                    </div>
+                `;
+            }
+            
+            // 更新游戏描述
+            document.querySelector('.description p').textContent = gameData.description;
+            
+            // 更新游戏截图
+            if (gameData.screenshots) {
+                const screenshotsContainer = document.querySelector('.screenshots-scroll');
+                screenshotsContainer.innerHTML = gameData.screenshots.map(screenshot => `
+                    <div class="screenshot">
+                        <img src="${screenshot}" alt="游戏截图">
+                    </div>
+                `).join('');
+            }
+            
+            // 更新技能标签
+            if (gameData.skills) {
+                const skillList = document.querySelector('.skill-list');
+                skillList.innerHTML = gameData.skills.map(skill => `
+                    <div class="skill-tag">${skill}</div>
+                `).join('');
+            }
+
+            // 更新开始游戏按钮
+            if (gameData.link) {
+                const playButton = document.querySelector('.play-button');
+                playButton.href = gameData.link;
+            }
+        }
+    </script>
 </body>
 </html> 

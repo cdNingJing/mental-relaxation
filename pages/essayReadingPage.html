@@ -1,56 +1,471 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>散文阅读 - 情绪缓解</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/essayReadingPage.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文字补全</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #2c7873 0%, #6fb98f 100%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .game-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .game-header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .game-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .game-stats {
+            display: flex;
+            gap: 20px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c7873;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+        }
+        .game-board {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .text-container {
+            margin-bottom: 30px;
+            line-height: 1.8;
+            font-size: 18px;
+            color: #1e293b;
+        }
+        .blank {
+            display: inline-block;
+            min-width: 100px;
+            height: 40px;
+            border-bottom: 2px solid #2c7873;
+            margin: 0 5px;
+            vertical-align: middle;
+            position: relative;
+        }
+        .blank select {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            text-align: center;
+            font-size: 18px;
+            color: #1e293b;
+            background: transparent;
+            cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            padding: 0 10px;
+        }
+        .blank select::-ms-expand {
+            display: none;
+        }
+        .blank::after {
+            display: none;
+        }
+        .blank.correct {
+            border-color: #48bb78;
+        }
+        .blank.incorrect {
+            border-color: #f56565;
+        }
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 16px;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-color: #2c7873;
+        }
+        .option.selected {
+            background: #2c7873;
+            color: white;
+            border-color: #2c7873;
+        }
+        .game-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #2c7873 0%, #6fb98f 100%);
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(44, 120, 115, 0.3);
+        }
+        .btn-secondary {
+            background: white;
+            color: #2c7873;
+            border: 2px solid #2c7873;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(44, 120, 115, 0.1);
+        }
+        .timer {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+        .progress-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #2c7873 0%, #6fb98f 100%);
+            transition: width 0.3s;
+        }
+        /* 自定义弹窗样式 */
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+        .modal-message {
+            font-size: 18px;
+            color: #64748b;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        .modal-button {
+            background: linear-gradient(135deg, #2c7873 0%, #6fb98f 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .modal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(44, 120, 115, 0.3);
+        }
+    </style>
 </head>
 <body>
-    <div class="essay-reading-container">
-        <!-- 提示图标 -->
-        <div class="hint-icon" id="hintIcon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="currentColor" stroke-width="2"/>
-                <path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-        </div>
-
-        <!-- 关闭按钮 -->
-        <button class="close-button" onclick="window.history.back()">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </button>
-
-        <!-- 弹出框 -->
-        <div class="hint-modal" id="hintModal">
-            <div class="hint-modal-content">
-                <div class="hint-modal-header">
-                    <h3>原文内容</h3>
-                    <button class="close-modal" id="closeModal">&times;</button>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="game-title">文字补全</div>
+            <div class="game-stats">
+                <div class="stat-item">
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">关卡</div>
                 </div>
-                <div class="hint-modal-body" id="hintModalBody">
+                <div class="stat-item">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">得分</div>
                 </div>
             </div>
         </div>
-
-        <!-- 内容区域 -->
-        <div class="essay-content">
-            <article class="essay-article">
-                <div class="essay-header">
-                    <h1 class="essay-title"></h1>
-                    <div class="essay-info">
-                        <span class="essay-author"></span>
-                        <span class="essay-source"></span>
-                    </div>
-                </div>
-                <div class="essay-body">
-                </div>
-            </article>
+        
+        <div class="game-board">
+            <div class="text-container">
+                人工智能（AI）是计算机科学的一个分支，它致力于开发能够模拟人类智能的系统。这些系统可以
+                <span class="blank">
+                    <select>
+                        <option value=""></option>
+                        <option value="自主">自主</option>
+                        <option value="自动">自动</option>
+                    </select>
+                </span>
+                学习、推理、感知、规划和解决问题。AI技术已经广泛应用于
+                <span class="blank">
+                    <select>
+                        <option value=""></option>
+                        <option value="医疗">医疗</option>
+                        <option value="教育">教育</option>
+                    </select>
+                </span>
+                医疗、金融、教育等领域，为人类生活带来了巨大的
+                <span class="blank">
+                    <select>
+                        <option value=""></option>
+                        <option value="便利">便利</option>
+                        <option value="帮助">帮助</option>
+                    </select>
+                </span>
+                便利。
+            </div>
+            
+            <div class="game-controls">
+                <button class="btn btn-primary" id="submitBtn">
+                    <i class="fas fa-check"></i> 提交
+                </button>
+            </div>
         </div>
     </div>
-    <script src="../js/essayReadingPage.js"></script>
+
+    <!-- 自定义弹窗 -->
+    <div class="custom-modal" id="customModal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-message" id="modalMessage"></div>
+            <button class="modal-button" id="modalButton">确定</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 游戏逻辑
+            const options = document.querySelectorAll('.option');
+            const blanks = document.querySelectorAll('.blank select');
+            const submitBtn = document.getElementById('submitBtn');
+            const modal = document.getElementById('customModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalButton = document.getElementById('modalButton');
+
+            // 检查必要的元素是否存在
+            if (!submitBtn || !modal || !modalTitle || !modalMessage || !modalButton) {
+                console.error('Required elements not found');
+                return;
+            }
+
+            let selectedOption = null;
+            let gameStarted = false;
+            let score = 0;
+            let highScore = localStorage.getItem('textCompletionHighScore') || 0;
+
+            // 正确答案
+            const correctAnswers = ['自主', '医疗', '便利'];
+
+            // 更新最高分显示
+            const scoreElement = document.querySelector('.stat-value:nth-child(2)');
+            const levelElement = document.querySelector('.stat-value:nth-child(1)');
+            
+            if (scoreElement) {
+                scoreElement.textContent = highScore;
+            }
+            if (levelElement) {
+                levelElement.textContent = '1';
+            }
+
+            // 开始游戏
+            function startGame() {
+                gameStarted = true;
+                score = 0;
+                
+                // 重置UI
+                blanks.forEach(blank => {
+                    blank.value = '';
+                    blank.parentElement.classList.remove('correct', 'incorrect');
+                });
+                options.forEach(option => {
+                    option.classList.remove('selected');
+                });
+                selectedOption = null;
+            }
+
+            // 结束游戏
+            function endGame() {
+                gameStarted = false;
+                
+                // 更新最高分
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('textCompletionHighScore', highScore);
+                    document.querySelector('.stat-value:nth-child(2)').textContent = highScore;
+                }
+                
+                // 显示结果
+                setTimeout(() => {
+                    alert(`游戏结束！\n得分：${score}\n最高分：${highScore}`);
+                }, 500);
+            }
+
+            // 显示自定义弹窗
+            function showModal(title, message, callback) {
+                if (!modal || !modalTitle || !modalMessage || !modalButton) {
+                    console.error('Modal elements not found');
+                    return;
+                }
+
+                modalTitle.textContent = title;
+                modalMessage.textContent = message;
+                modal.style.display = 'flex';
+                
+                modalButton.onclick = () => {
+                    modal.style.display = 'none';
+                    if (callback) callback();
+                };
+            }
+
+            // 提交答案
+            submitBtn.addEventListener('click', () => {
+                if (!gameStarted) return;
+                
+                let allCorrect = true;
+                let hasEmpty = false;
+                
+                blanks.forEach((blank, index) => {
+                    const value = blank.value.trim();
+                    if (!value) {
+                        hasEmpty = true;
+                        blank.parentElement.classList.add('incorrect');
+                        allCorrect = false;
+                    } else {
+                        // 检查答案是否正确
+                        if (value === correctAnswers[index]) {
+                            blank.parentElement.classList.add('correct');
+                        } else {
+                            blank.parentElement.classList.add('incorrect');
+                            allCorrect = false;
+                        }
+                    }
+                });
+                
+                if (hasEmpty) {
+                    showModal('提示', '请完成所有填空！');
+                    return;
+                }
+                
+                if (allCorrect) {
+                    score += 10;
+                    document.querySelector('.stat-value:nth-child(1)').textContent = score;
+                    showModal('恭喜', '答对了！', () => {
+                        startGame();
+                    });
+                } else {
+                    showModal('提示', '答案不正确，请重试！', () => {
+                        blanks.forEach(blank => {
+                            blank.parentElement.classList.remove('correct', 'incorrect');
+                        });
+                    });
+                }
+            });
+
+            // 选项点击
+            options.forEach(option => {
+                option.addEventListener('click', () => {
+                    if (!gameStarted) return;
+                    
+                    if (selectedOption) {
+                        selectedOption.classList.remove('selected');
+                    }
+                    option.classList.add('selected');
+                    selectedOption = option;
+
+                    // 将选项填入当前选中的下拉框
+                    const activeBlank = document.querySelector('.blank select:focus');
+                    if (activeBlank) {
+                        activeBlank.value = option.textContent;
+                        activeBlank.parentElement.classList.add('correct');
+                        // 触发change事件以更新状态
+                        activeBlank.dispatchEvent(new Event('change'));
+                    }
+                });
+            });
+
+            // 下拉框事件
+            blanks.forEach(blank => {
+                blank.addEventListener('change', () => {
+                    if (!gameStarted) return;
+                    
+                    const value = blank.value.trim();
+                    if (value) {
+                        blank.parentElement.classList.add('correct');
+                    } else {
+                        blank.parentElement.classList.remove('correct');
+                    }
+                });
+            });
+
+            // 初始化游戏
+            startGame();
+        });
+    </script>
 </body>
 </html> 
